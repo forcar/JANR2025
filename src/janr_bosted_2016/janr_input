@@ -1,0 +1,108 @@
+action    F                     / G-> calculate CStable,F->fit,GP-multipols
+/ Input for the cross section calculation /
+1 99	/TypeofthePion[1/2/3]for[Pi0/Pi+/Pi-]andobservable(1023etc)
+4.2		 		/ incidnt electron energy
+1.1,1.72 0.01	  		/ W -> min, max, step  
+0.1,0.1,1.05			/Q2->min,max,step
+-1.0,1.0,0.1    		/ cos(th*) -> min, max, step
+-360.,360.,30.		        / phi* -> min, max, step
+0.05			        / Integration accuracy
+a.dat        		/file name for CStableQ2,W,cos(The),Phi,CS
+x.inf			/fit information
+/ Set event generator
+0		        / number of (gp) interactions to be generated
+1		 	/ number of final states per (gp) interaction to be generated
+19			/ RANMAR integer sequence number (1 to 900000000).
+/ Input for the fitting /
+200000.                 / Max calls (approx) before ending
+1.0                     / tolorance on minimization 0.001*this(10)*UP
+1.0                     / UP on function value for parameter error definition
+49		        / Number of fit parameters
+/#|Name       | Start Val|Step size |  Status | Low lim | Up limit/  
+ 1 cc1           1.0          10.0        0     0.0000    0.0000
+ 2 cc2           1.0          10.0        2     0.0000    0.0000
+ 3 cc3           1.0          10.0        2     0.0000    0.0000
+ 4 cc4           1.0          10.0        0     0.0000    0.0000
+ 5 cc5           1.0          10.0        0     0.0000    0.0000
+ 6 cc6           1.0          20.         0     0.0000    0.0000
+ 7 cc7           1.0          20.         0     0.0000    0.0000
+ 8 cc8           1.0          10.         0     0.0000    0.0000
+ 9 cc9           1.0          10.         0     0.0000    0.0000
+10 cc10          1.0          10.         0     0.0000    0.0000
+11 cc11          1.0          10.         0     0.0000    0.0000
+12 cc12          1.0          20.         0     0.0000    0.0000
+13 cc13          1.0          10.         0     0.0000    0.0000
+14 cc14          1.0          10.         0     0.0000    0.0000
+15 cc15          1.0          10.         0     0.0000    0.0000
+16 cc16          1.0          10.         0     0.0000    0.0000
+17 cc17          1.0          10.         0     0.0000    0.0000
+18 cc18          1.0          10.         0     0.0000    0.0000
+19 cc19          1.0          10.         0     0.0000    0.0000
+20 cc20          1.0          10.         0     0.0000    0.0000
+21 cc21          1.0          10.         0     0.0000    0.0000
+22 cc22          1.0          10.         0     0.0000    0.0000
+23 cc23          1.0          10.         0     0.0000    0.0000
+24 cc24          1.0          10.         0     0.0000    0.0000
+25 cc25          1.0          20.         0     0.0000    0.0000
+26 cc26          1.0          10.         0     0.0000    0.0000
+27 cc27          1.0          10.         0     0.0000    0.0000
+28 cc28          1.0          10.         0     0.0000    0.0000
+29 cc29          1.0          10.         0     0.0000    0.0000
+30 cc30          0.0          10.         2     0.0000    0.0000
+31 cc31          0.0          10.         2     0.0000    0.0000
+32 cc32          0.0          10.         2     0.0000    0.0000
+33 cc33          0.0          10.         2     0.0000    0.0000
+34 cc34          0.0          10.         2     0.0000    0.0000
+35 cc35          0.0          30.         2     0.0000    0.0000
+36 cc36          0.0          10.         2     0.0000    0.0000
+37 cc37          0.0          10.0        2     0.0000    0.0000
+38 cc38          0.0          10.0        2     0.0000    0.0000
+39 cc39          0.0          10.0        2     0.0000    0.0000
+40 cc40          0.0          10.0        2     0.0000    0.0000
+41 cc41          1.0          30.         0     0.0000    0.0000
+42 cc42          1.0          10.0        0     0.0000    0.0000
+43 cc43          1.0          10.0        0     0.0000    0.0000
+44 cc44          1.0           3.         0     0.0000    0.0000
+45 cc45          1.0           3.         0     0.0000    0.0000
+46 cc46          1.0           3.         0     0.0000    0.0000
+47 cc47          1.0          30.         0     0.0000    0.0000
+48 cc48          1.0          30.         0     0.0000    0.0000
+49 cc49          1.0          10.         0     0.0000    0.0000
+/Read data file name /
+n         inputdat
+/Format for in Data -> W Q2 epsilon Costh*  phi* Sigma stat_err
+5,66,11		/These are input, output, featch for Minuit
+1000000.	/Max Chi2 for a point at the first iteration that aceptable
+/List of "BAD " points in the file/
+0    	/ Number of bad regions, if =0 NO bad regions
+33,33	/ Points 17 < #point < 23 are bad  => region 1 
+76,76	/ Point 404 is bad  => region 2
+160,161	/ Illegal declaration  => region 3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
