@@ -18,6 +18,14 @@ Note that this code was initially used incorrectly by Bosted as I summarized her
 
 **src/janr03**: 
 
-Archive of my attempt in 2003 to clean up JANR I/O and code organization and using the CERNLIB PAW package for interactive fitting visualization.  The description is given here: https://userweb.jlab.org/~lcsmith/galileo4/codes/janr2003/ where references are given to Inna's theory papers and experiment analyses using JANR code from this time frame. 
+Archive of my attempt in 2003 to clean up JANR I/O and code organization and using the CERNLIB PAW package for interactive fitting visualization.  
+
+The description is given here:
+
+https://userweb.jlab.org/~lcsmith/galileo4/codes/janr2003/ 
+
+where references are given to Inna's theory papers and experiment analyses using JANR code from this time frame. 
 
 **NOTES:**
+
+These 25+ year old legacy Fortran codes required trial and error changes to FORTRAN compile flags to build under the current CentOS 7,8 environments on the JLAB Ifarm.  I could not get Inna's full fitting code to execute due to MINUIT errors, which may be why Bosted removed the MINUIT routines.  
