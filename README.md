@@ -18,6 +18,6 @@ Note that this code was initially used incorrectly by Bosted as I summarized her
 
 **src/janr03**: 
 
-Archive of my attempt in 2003 to clean up JANR I/O and code organization and using the CERNLIB PAW package for interactive fitting visualization.  The description is given here: https://userweb.jlab.org/~lcsmith/galileo4/codes/janr2003/
+Archive of my attempt in 2003 to clean up JANR I/O and code organization and using the CERNLIB PAW package for interactive fitting visualization.  The description is given here: https://userweb.jlab.org/~lcsmith/galileo4/codes/janr2003/ where references are given to Inna's theory papers and experiment analyses using JANR code from this time frame. 
 
 **NOTES:**
