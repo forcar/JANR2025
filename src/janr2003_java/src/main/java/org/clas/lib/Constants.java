@@ -2,7 +2,11 @@ package org.clas.lib;
 
 import java.util.Arrays;
 
+import javax.swing.filechooser.FileSystemView;
+
 public class Constants {
+	
+        String janrPath = FileSystemView.getFileSystemView().getHomeDirectory().toString()+"/janr/";
 	
         public static final int MAX_PHI_INDEX = 6;
         public static final int MAX_IS_INDEX = 3;
