@@ -9,8 +9,8 @@ public class MultAna extends Constants {
 	
     JanrRePhi jrp = new JanrRePhi(); 
 
-	public MultAna(double qq) {
-		multAna(qq);
+	public MultAna() {
+
 	}
 
     public void multAna(double qq) {
@@ -99,7 +99,7 @@ public class MultAna extends Constants {
                 for (int is = 1; is <= 6; is++) {
                     int lun = (lm+2)*10+is;
                     int ifile = lm*6+(is-1); 
-                    String filename = "multipols/" + fnamr[ifile];
+                    String filename = janrPath+"multipols/" + fnamr[ifile];
                     luns[lun] = new BufferedWriter(new FileWriter(filename, false));
                     luns[lun].write(fnamr[ifile] + "\n");
                     luns[lun].write("\n");
@@ -652,7 +652,7 @@ public class MultAna extends Constants {
     }
 
     public static void main(String[] args) {
-    	MultAna ma = new MultAna(0.4);
+    	MultAna ma = new MultAna();
         double result = ma.gauss("ff", 0, 1, 1e-6);
         System.out.println("Integration result: " + result); 
     }
