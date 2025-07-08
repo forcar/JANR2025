@@ -1,0 +1,61 @@
+action    GP             /GP->final,M-multipols
+/ Input for the cross section calculation /
+1                       / Type of the Pion [1/2/3] for [Pi0/Pi+/Pi-]
+4.2		 	/ incident electron energy
+1.1,2.01,0.1    	/ W -> min, max, step  
+0.4,0.4,0.0      	/ Q2 -> min, max, step (for.ph.min=max=0.)
+.999,0.999,0.1		/ cos(th*) -> min, max, step
+180.,180.,15.		/ phi* -> min, max, step
+0.05			/ Integration accuracy
+cs_hf1g_q04pi0.dat		/file name for CS table Q2,W,cos(The),Phi,CS
+test.inf		/fit information
+/ Input for the event generation /
+0		/ number of (gp) interactions to be generated
+1		 	/ number of final states per (gp) interaction to be generated
+19			/ RANMAR integer sequence number (1 to 900000000).
+/ Input for the fitting /
+20000.        / Max calls (approx) before ending
+100.          / Error on minimization 0.001*this(100)
+1.0        / UP on function value for parameter error definition
+30		/ Number of fit parameters
+/#|Name       | Start Val|Step size |  Status | Low lim | Up limit/  
+ 1 cM1          4.4748        1.2         2     0.0000    0.0000
+ 2 cE1          -0.038        1.0         2     0.0000    0.0000
+ 3 cS1          -0.1754       1.0         2     0.0000    0.0000
+ 4 cM2           0.99         0.3         2     0.0000    0.0000
+ 5 cE2           0.4          0.3         2     0.0000    0.0000
+ 6 cS2           1.6          0.3         2     0.0000    0.0000
+ 7 cM3           0.4          0.3         2     0.0000    0.0000  
+ 8 cE3           1.3          0.3         2     0.0000    0.0000
+ 9 cS3           1.3          0.3         2     0.0000    0.0000
+10 cMP1          0.1          0.2         2     0.0000    0.0000
+11 cSP1          0.2272       1.5         2     0.0000    0.0000
+12 cEP2          0.598        0.2         2     0.0000    0.0000
+13 cSP2          -0.163       4.5         2     0.0000    0.0000
+14 cMP3          0.2252       0.2         2     0.0000    0.0000
+15 cEP3          0.17842      0.2         2     0.0000    0.0000
+16 cSP3          -0.138       4.5         2     0.0000    0.0000
+17 cMP4          1.012        0.3         2     0.0000    0.0000
+18 cEP4          1.0266       0.3         2     0.0000    0.0000   
+19 cSP4          1.0145       0.3         2     0.0000    0.0000
+20 cEP5          1.09         0.3         2     0.0000    0.0000
+21 cSP5          0.69         0.3         2     0.0000    0.0000
+22 cMP6          1.           0.3         2     0.0000    0.0000
+23 cEP6          2.           0.3         2     0.0000    0.0000
+24 cSP6          1.324        0.3         2     0.0000    0.0000
+25 cMP7          0.69         0.3         2     0.0000    0.0000
+26 cEP7          0.74         0.3         2     0.0000    0.0000
+27 cSP7          0.48         0.5         2     0.0000    0.0000
+28 cMP12         -2.504       0.5         2     0.0000    0.0000
+29 cEP12         1.           5.          2     0.0000    0.0000
+30 cSP12         5.4998       5.          2     0.0000    0.0000
+/Read data file name /
+         inputdat
+/Format for in Data -> W Q2 epsilon Costh*  phi* Sigma stat_err
+5,66,11		/These are input, output, featch for Minuit
+20.		/Max Chi2 for a point at the first iteration that aceptable
+/List of "BAD " points in the file/
+0    	/ Number of bad regions, if =0 NO bad regions
+33,33	/ Points 17 < #point < 23 are bad  => region 1 
+76,76	/ Point 404 is bad  => region 2
+160,161	/ Illegal declaration  => region 3
