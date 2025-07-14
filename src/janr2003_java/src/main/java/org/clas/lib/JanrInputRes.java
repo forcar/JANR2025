@@ -8,19 +8,16 @@ public class JanrInputRes extends Constants {
 
     private double[][] resdat = new double[10][MAXres];
 
-    String resifile;
-
-    public JanrInputRes(String resifile) {
-        this.resifile = resifile;
+    public JanrInputRes() {
         initializeConstants();
     }
 
-    private void initializeConstants() {
+    public void initializeConstants() {
+        System.out.println("JanrInputRes.initializeConstants()");
         pi = 2.0 * Math.acos(0.0);
         a2 = Math.sqrt(2.0);
         mn = 0.93827;
         mp = 0.13498;
-
         meta = 0.547;
         m2pion = 2.0 * mp;
         mn22 = mn * mn;
@@ -28,27 +25,28 @@ public class JanrInputRes extends Constants {
         mn2 = 2.0 * mn;
     }
 
-    public void loadResonanceData() throws IOException {
-
-        try (BufferedReader br = new BufferedReader(new FileReader(resifile))) {
-            String line;
-            int k = 0;
-            while ((line = br.readLine()) != null && k < MAXres) {
-                // Split line into tokens (assuming whitespace or comma separated)
-                String[] tokens = line.trim().split("[,\\s]+");
-                if (tokens.length < 10) continue; // skip incomplete lines
-
+    public void loadResonanceData(String file) {
+        System.out.println("JanrInputRes.loadResonanceData("+file+")");
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line; int k = 0;
+            while (k < Nres) {
+                line = br.readLine();
+                if (line.trim().length() ==  0) continue;
+                String[] tokens = line.trim().split("\\s+");
+                if (tokens.length < 10) break;
                 for (int i = 0; i < 10; i++) {
                     resdat[i][k] = Double.parseDouble(tokens[i]);
+//                    System.out.println(i+" "+k+" "+resdat[i][k]);
                 }
                 k++;
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        for (int i = 0; i < MAXres; i++) {
+        
+        for (int i = 0; i < MAXres; i++) { //[0] not used since indices are hard-coded later
             int ii = (int) resdat[0][i];
-            if (ii < 0 || ii >= MAXres) continue; // prevent index out of bounds
-
+            if (ii < 0 || ii >= MAXres) continue; 
             ires[ii]   = (int) resdat[1][i];
             jres[ii]   = (int) resdat[2][i];
             lres[ii]   = (int) resdat[3][i];
@@ -59,24 +57,18 @@ public class JanrInputRes extends Constants {
             langul[ii] = (int) resdat[8][i];
             lprime[ii] = (int) resdat[9][i];
         }
+        
+        System.out.println("MAXres = "+MAXres);
+//        for (int i=0; i<MAXres; i++) System.out.println(i+" "+(int)resdat[1][i]+" "+ires[i]+" "+jres[i]+" "+(int)lres[i]+" "+mres[i]);        
+//        for (int i=0; i<MAXres; i++) System.out.println(i+" "+(int)resdat[0][i]+" "+(int)resdat[1][i]+" "+(int)ires[i]+" "+(int)jres[i]+" "+(int)lres[i]+" "+mres[i]);
+
+
+
     }
 
-    public void printResonances() {
-        for (int i = 0; i < MAXres; i++) {
-            System.out.printf("ires[%d]=%d, jres[%d]=%d, lres[%d]=%d, mres[%d]=%.6f, gres[%d]=%.6f, eta[%d]=%.6f, xres[%d]=%.6f, langul[%d]=%d, lprime[%d]=%d%n",
-                i, ires[i], i, jres[i], i, lres[i], i, mres[i], i, gres[i], i, eta[i], i, xres[i], i, langul[i], i, lprime[i]);
-        }
-    }
-
-    public void main(String[] args) {
-        String filename = "resifile.dat"; 
-        JanrInputRes loader = new JanrInputRes(filename);
-        try {
-            loader.loadResonanceData();
-            loader.printResonances();
-        } catch (IOException e) {
-            System.err.println("Error reading resonance data: " + e.getMessage());
-        }
+    public static void main(String[] args) {   	
+       JanrInputRes jir = new JanrInputRes();
+       jir.loadResonanceData("run/res-q0.4.inp");
     }
 }
 
