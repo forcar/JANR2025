@@ -64,7 +64,7 @@ public class Constants {
 
 	
 // BORN_TERMS
-		public static float [][][] br = new float[2][6][3];
+		public static double [][][] br = new double[2][6][3];
 		
 // CROSS_SEC 
 		/*
@@ -174,6 +174,9 @@ public class Constants {
 // IMA 
 		public static float [][] ba = new float[6][3];
 			
+// IFINTG
+//		public static float lm,is,i,j,w,q2;
+		
 // INPAR
 		public static String 	fitopt;
 		public static String 	grfopt;
@@ -228,7 +231,6 @@ public class Constants {
 // MULTAMPL
 	    public static final int Maxmpoints = 101;
 
-	    // Declare arrays with the specified dimensions
 	    public static double[] Wtab = new double[Maxmpoints];
 	    
 	    public static double[][][] AEm = new double[Maxmpoints][6][3];
@@ -327,16 +329,16 @@ public class Constants {
 	    public static double[][][] phi_amp = new double[6][2][3];
 	    
 // REMULT
-	    public static float[][][][] Rint = new float[6][3][6][2];
-	    public static float[][][] Mlp = new float[6][3][2];
-	    public static float[][][] Mlm = new float[6][3][2];
-	    public static float[][][] Elp = new float[6][3][2];
-	    public static float[][][] Elm = new float[6][3][2];
-	    public static float[][][] Slp = new float[6][3][2];
-	    public static float[][][] Slm = new float[6][3][2];
+	    public static float[][][][] Rint = new float[6][3][6][2];  
+	    public static float[][][]    Mlp = new float[6][3][2];
+	    public static float[][][]    Mlm = new float[6][3][2];
+	    public static float[][][]    Elp = new float[6][3][2];
+	    public static float[][][]    Elm = new float[6][3][2];
+	    public static float[][][]    Slp = new float[6][3][2];
+	    public static float[][][]    Slm = new float[6][3][2];
 	    
 // REPHI 
-	    public static double[][][] PHisot = new double[2][6][3];
+	    public static double[][][] PHisot = new double[2][6][3];  
 	    
 // RESFUNC
 	    public static double[] sigmaT = new double[2];
@@ -367,12 +369,12 @@ public class Constants {
 	    public static double[] mres = new double[MAXres];
 	    public static double[] gres = new double[MAXres];
 	    public static double[] xres = new double[MAXres];
-	    public static double[] eta = new double[MAXres];
+	    public static double[]  eta = new double[MAXres];
 	    public static double[] lres = new double[MAXres];
 	    
 	    public static int[] langul = new int[MAXres];
 	    public static int[] lprime = new int[MAXres];
-	    public static int[] jres = new int[MAXres];
-	    public static int[] ires = new int[MAXres];
+	    public static int[]   jres = new int[MAXres];
+	    public static int[]   ires = new int[MAXres];
 	    	
 }
