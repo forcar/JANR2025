@@ -11,10 +11,10 @@ public class RePhi extends Constants {
 		
 	}
 
-    public void rePhi(double S, double Q2) {
-        W = Math.sqrt(S);
-        qq2 = Q2;
-        if (Q2 == 0) qq2 = 0.00001f;
+    public void rePhi(double s, double q2) {
+        W = Math.sqrt(s);
+        qq2 = q2;
+        if (q2 == 0) qq2 = 0.00001f;
         
         on1 = W - Egamma;
         on2 = W - Epion;
@@ -37,22 +37,22 @@ public class RePhi extends Constants {
         // Loop by Isospin states (+), (-) & (0)
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 2; j++) {            	
-                br5 = br[j][5][i] + (E + qk) * br[j][6][i] / 2.0f;
+                br5 = br[j][5-1][i] + (E + qk) * br[j][6-1][i] / 2.0f;
                 
                 PHisot[j][0][i] =  AK[0] * (Wm * br[j][0][i] - br5);
                 PHisot[j][1][i] = -AK[1] * (Wp * br[j][0][i] + br5);
                 
                 br1 = 2.0f * br[j][2][i] - br[j][1][i];
-                br2 = br[j][6][i] / 2.0f - br[j][3][i];
+                br2 = br[j][5][i] / 2.0f - br[j][3][i];
                 br3 = qq2 * br[j][0][i];
                 
                 PHisot[j][2][i] = AK[2] * ( br1 + Wp * br2);
                 PHisot[j][3][i] = AK[3] * (-br1 + Wm * br2);
                 
-                br4 = op1 * (br3 + Wm * br5 + w2 * om1 * (br[j][1][i] - Wp * br[j][6][i] / 2.0f));
+                br4 = op1 * (br3 + Wm * br5 + w2 * om1 * (br[j][1][i] - Wp * br[j][6-1][i] / 2.0f));
                 PHisot[j][4][i] = AK[4] * (br4 - XX * (br1 + Wp * br2));
                 
-                br6 = -om1 * (br3 - Wp * br5 + w2 * op1 * (br[j][1][i] + Wm * br[j][6][i] / 2.0f));
+                br6 = -om1 * (br3 - Wp * br5 + w2 * op1 * (br[j][1][i] + Wm * br[j][6-1][i] / 2.0f));
                 PHisot[j][5][i] = AK[5] * (br6 + XX * (br1 - Wm * br2));
             }
         }
