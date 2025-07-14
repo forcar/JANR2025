@@ -3,18 +3,17 @@ package org.clas.lib;
 import static java.lang.Math.*;
 
 public class Born extends Constants{
-    
-    private static double[][][] br = new double[2][6][3];
-    
+	
+	GAMMF g = new GAMMF();
+
     public Born() {
     	
     }
     
     public void born(double s, double q2) {
     	
-    	//   Calculate Born term contribution (nucleon and pion poles) into invariant amplitudes.
-    	
-    	GAMMF g = new GAMMF();
+    	// Calculate Born term contribution (nucleon and pion poles) into invariant amplitudes.
+    	// zero-indexing arrays only
     	
         double d = 1.0 / (s - mn22);
         double d1 = u - mn22;
@@ -162,6 +161,7 @@ public class Born extends Constants{
         }
         
         double   sregge = (s - u) / 2.0;
+        
         double alpha_pi = 0.7 * (t - mp22);
         double alpha_ro = 0.55 + 0.8 * t;
         
@@ -200,8 +200,5 @@ public class Born extends Constants{
             }
         }
     }
-    
-    public static double[][][] getBr() {
-        return br;
-    }
+
 }
