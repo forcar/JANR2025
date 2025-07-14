@@ -4,8 +4,8 @@ import static java.lang.Math.*;
 
 public class JanrRePhi extends Constants {
 	
-	Born  b = new Born(); 
 	Etta  e = new Etta();
+	Born  b = new Born(); 
 	RePhi r = new RePhi();
 	
     double s, qkratio, kgamma, qpion, k22, q22;
@@ -15,7 +15,7 @@ public class JanrRePhi extends Constants {
     }
     
     public void janrRePhi(double w, double q2, double costh, int ierr) {
-
+    	
         s  = pow(w, 2);
         w2 = 2.0 * w;
         E  = s - mn22;
