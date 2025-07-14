@@ -13,7 +13,7 @@ public class JanrInputSAID extends Constants {
 	}
 	
 	public void loadMultipoles() {
-        System.out.println("JANR_INPUT_SAID: Reading SAID tables");
+        System.out.println("JanrInputSAID: Reading SAID tables");
 		loadMultipoleData("mp33",51,6,mp33r,mp33i);
 		loadMultipoleData( "s11",51,9,s11r,s11i);
 		loadMultipoleData( "s31",51,9,s31r,s31i);
@@ -32,9 +32,9 @@ public class JanrInputSAID extends Constants {
 
 	public void loadMultipoleData(String mpol, int nmax, int len, double re[], double im[]) {
         try (BufferedReader br = new BufferedReader(new FileReader(path+mpol+".dat"))) {
-        	int i=0; 
+        	String line; int i=0; 
             while(i < nmax) {
-                String line = br.readLine();
+                line = br.readLine();
                 if (line.trim().length() ==  0) continue;
                 String[] tokens = line.trim().split("\\s+");
                 if (tokens.length < len) break;
