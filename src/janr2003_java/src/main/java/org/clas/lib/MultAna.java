@@ -5,24 +5,6 @@ import java.io.*;
 public class MultAna extends Constants {
 	
 	int ierr;
-		
-    String[] fnamr = {
-            "rm0p.dat","rm0m.dat","re0p.dat","re0m.dat","rs0p.dat","rs0m.dat",
-            "rm1p.dat","rm1m.dat","re1p.dat","re1m.dat","rs1p.dat","rs1m.dat",
-            "rm2p.dat","rm2m.dat","re2p.dat","re2m.dat","rs2p.dat","rs2m.dat",
-            "rm3p.dat","rm3m.dat","re3p.dat","re3m.dat","rs3p.dat","rs3m.dat"
-        };
-    String[] fnamhigh = {
-            "rm4p.dat","rm4m.dat","re4p.dat","re4m.dat","rs4p.dat","rs4m.dat",
-            "rm5p.dat","rm5m.dat","re5p.dat","re5m.dat","rs5p.dat","rs5m.dat"
-        };
-    String[] fnamrr = {
-            "rrm0p.dat","rrm0m.dat","rre0p.dat","rre0m.dat",
-            "rrs0p.dat","rrs0m.dat",
-            "rrm1p.dat","rrm1m.dat","rre1p.dat","rre1m.dat","rrs1p.dat","rrs1m.dat",
-            "rrm2p.dat","rrm2m.dat","rre2p.dat","rre2m.dat","rrs2p.dat","rrs2m.dat",
-            "rrm3p.dat","rrm3m.dat","rre3p.dat","rre3m.dat","rrs3p.dat","rrs3m.dat"
-        };
    
 	int lm,is,ii,jj; //common/ifintg/lm,is,ii,jj,w,q2
 	double w,q2;     //common/ifintg/lm,is,ii,jj,w,q2
@@ -38,49 +20,12 @@ public class MultAna extends Constants {
     public void multAna(double qq) {
     	
         if (IntAccur == 0) IntAccur = 0.05f; 
-        System.out.println("MULT_ANA: IntAccur = " + IntAccur);
     	
         ierr = 0;        
-
-        cm1  = start_value[0];
-        ce1  = start_value[1];
-        cs1  = start_value[2];
-        cmp1 = start_value[3];
-        csp1 = start_value[4];
-        cep2 = start_value[5];
-        csp2 = start_value[6];
-        cmp3 = start_value[7];
-        cep3 = start_value[8];
-        csp3 = start_value[9];
-        cep4 = start_value[10];
-        csp4 = start_value[11];
-        cep5 = start_value[12];
-        csp5 = start_value[13];
-        cmp6 = start_value[14];
-        cep6 = start_value[15];
-        csp6 = start_value[16];
-        cmp7 = start_value[17];
-        cep7 = start_value[18];
-        csp7 = start_value[19];
-        cmp8 = start_value[20];
-        cep8 = start_value[21];
-        csp8 = start_value[22];
-        cmp9 = start_value[23];
-        cep9 = start_value[24];
-        cmp10 = start_value[25];
-        cep10 = start_value[26];
-        cmp11 = start_value[27];
-        cep11 = start_value[28];
-        cspa  = start_value[29];
-        
-        System.out.println("MULT_ANA: Evaluating background at Q2= " + qq);
-
+       
         int Nw = 101;
         double W_min = 1.1;
         double W_step = 0.01;
-
-        System.out.println("MULT_ANA: Number of W points = " + Nw);
-        System.out.println("MULT_ANA: W_min,W_step = " + W_min + "," + W_step);
 
         for (jj = 0; jj < 1; jj++) {
         try {
@@ -243,7 +188,7 @@ public class MultAna extends Constants {
         }
         }
 
-    private static void write201(BufferedWriter out, double W, double El, float[][][] arr, int lm, int jj) throws IOException {
+    private static void write201(BufferedWriter out, double W, double El, double[][][] arr, int lm, int jj) throws IOException {
         String line = String.format("  %7.3f %7.3f  %12.5f %12.5f %12.5f\n", W, El, arr[lm][0][jj], arr[lm][1][jj], arr[lm][2][jj]);
         out.write(line);
         out.flush();
@@ -584,16 +529,16 @@ public class MultAna extends Constants {
 
         if (lm >= 0) {
             Elp[lmIdx][isIdx][jjIdx] = (float) (
-                (-2.0 * lm * Rint[lmIdx][isIdx][0][jjIdx]
-                           + Rint[lmIdx][isIdx][1][jjIdx]
-                + 2.0 * lm * Rint[lmIdx][isIdx][2][jjIdx]
-           - lm * (lm - 1) * Rint[lmIdx][isIdx][3][jjIdx])
-                / (2.0 * (lm + 1.0) * (2.0 * lm + 1.0))
+                (-2 * lm * Rint[lmIdx][isIdx][0][jjIdx]
+                         + Rint[lmIdx][isIdx][1][jjIdx]
+                 +2 * lm * Rint[lmIdx][isIdx][2][jjIdx]
+         - lm * (lm - 1) * Rint[lmIdx][isIdx][3][jjIdx])
+                         /(2 * (lm + 1) * (2 * lm + 1))
             );
             Slp[lmIdx][isIdx][jjIdx] = (float) (
-                (Rint[lmIdx][isIdx][4][jjIdx]
-          - lm * Rint[lmIdx][isIdx][5][jjIdx])
-                / (lm + 1.0) / (2.0 * lm + 1.0)
+                          (Rint[lmIdx][isIdx][4][jjIdx]
+                    - lm * Rint[lmIdx][isIdx][5][jjIdx])
+                         /     (lm + 1) / (2 * lm + 1)
             );
             Mlp[lmIdx][isIdx][jjIdx] = 0.0f;
             Mlm[lmIdx][isIdx][jjIdx] = 0.0f;
@@ -603,33 +548,33 @@ public class MultAna extends Constants {
 
         if (lm >= 1) {
             Mlp[lmIdx][isIdx][jjIdx] = (float) (
-                (2.0 *                 Rint[lmIdx][isIdx][0][jjIdx]
-                                     + Rint[lmIdx][isIdx][1][jjIdx]
-                          + 2.0 * lm * Rint[lmIdx][isIdx][2][jjIdx]
-           + (lm - 1.0) * (lm + 2.0) * Rint[lmIdx][isIdx][3][jjIdx])
-                / (2.0  * (lm + 1.0) * (2.0 * lm + 1.0))
+                  (2 *               Rint[lmIdx][isIdx][0][jjIdx]
+                                   + Rint[lmIdx][isIdx][1][jjIdx]
+                      + 2 * lm     * Rint[lmIdx][isIdx][2][jjIdx]
+           + (lm - 1) * (lm + 2)   * Rint[lmIdx][isIdx][3][jjIdx])
+                                   / (2  * (lm + 1) * (2 * lm + 1))
             );
             Mlm[lmIdx][isIdx][jjIdx] = (float) (
-                (-2.0 *                 Rint[lmIdx][isIdx][0][jjIdx]
-                                      - Rint[lmIdx][isIdx][1][jjIdx]
-                     + 2.0 * (lm + 1) * Rint[lmIdx][isIdx][2][jjIdx]
-            - (lm - 1.0) * (lm + 2.0) * Rint[lmIdx][isIdx][3][jjIdx])
-                / (2.0 * lm * (2.0 * lm + 1.0))
+                  (-2 *              Rint[lmIdx][isIdx][0][jjIdx]
+                                   - Rint[lmIdx][isIdx][1][jjIdx]
+                  + 2 * (lm + 1)   * Rint[lmIdx][isIdx][2][jjIdx]
+           - (lm - 1) * (lm + 2)   * Rint[lmIdx][isIdx][3][jjIdx])
+                                   / (2 * lm * (2 * lm + 1))
             );
             Slm[lmIdx][isIdx][jjIdx] = (float) (
-                                       (Rint[lmIdx][isIdx][4][jjIdx]
-                 -         (lm + 1.0) * Rint[lmIdx][isIdx][5][jjIdx])
-                / (lm * (2.0 * lm + 1.0))
+                                    (Rint[lmIdx][isIdx][4][jjIdx]
+                 +      (lm + 1)   * Rint[lmIdx][isIdx][5][jjIdx])
+                                   / (lm * (2 * lm + 1))
             );
         }
 
         if (lm >= 2) {
             Elm[lmIdx][isIdx][jjIdx] = (float) (
-                (2.0 *      (lm + 1.0) * Rint[lmIdx][isIdx][0][jjIdx]
-                                       + Rint[lmIdx][isIdx][1][jjIdx]
-                    - 2.0 * (lm + 1.0) * Rint[lmIdx][isIdx][2][jjIdx]
-             - (lm + 1.0) * (lm + 2.0) * Rint[lmIdx][isIdx][3][jjIdx])
-                / (2.0 * lm * (2.0 * lm + 1.0))
+                   (2 * (lm + 1)   * Rint[lmIdx][isIdx][0][jjIdx]
+                                   + Rint[lmIdx][isIdx][1][jjIdx]
+                  - 2 * (lm + 1)   * Rint[lmIdx][isIdx][2][jjIdx]
+           - (lm + 1) * (lm + 2)   * Rint[lmIdx][isIdx][3][jjIdx])
+                                   / (2 * lm * (2 * lm + 1))
             );
         }
     }
