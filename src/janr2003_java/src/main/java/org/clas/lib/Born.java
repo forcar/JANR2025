@@ -35,7 +35,7 @@ public class Born extends Constants{
         
         // Proton Pauli Formfactors
         double f1p = gmp / (1.0 + mn2 * z);
-        double f2p = z * f1p;
+        F2p = z * f1p;
         
         // Gen and Gmn from Kees de Jager JLAB-PHY-00-01
         double gen = 1.6 * 0.5 * q2 / (1.0 + 25.0 * q2 * q2);
@@ -43,15 +43,15 @@ public class Born extends Constants{
         
         // Neutron Pauli Formfactors
         double f1n = (gen + tau * gmn) / (1.0 + tau);
-        double f2n = (gmn - gen) / (1.0 + tau) / mn2;
+        F2n = (gmn - gen) / (1.0 + tau) / mn2;
         
         // Isovector and Isoscalar Pauli Formfactors (1 is V, 2 is S)
         double[] f_1 = new double[2];
         double[] f_2 = new double[2];
         f_1[0] = f1p - f1n;
         f_1[1] = f1p + f1n;
-        f_2[0] = f2p - f2n;
-        f_2[1] = f2p + f2n;
+        f_2[0] = F2p - F2n;
+        f_2[1] = F2p + F2n;
         
         // This loop counts for isotopic amplitudes (+) and (-),
         // which are determined by isovector form factors
