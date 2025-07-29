@@ -1,17 +1,40 @@
 package org.clas.lib;
 
-import java.util.Arrays;
-
-import javax.swing.filechooser.FileSystemView;
-
 public class Constants {
 	
+	    public static Boolean debug=false;
         //String janrPath = FileSystemView.getFileSystemView().getHomeDirectory().toString()+"/janr/";
 	    public static String janrPath = "run/";
+	    
+	    public static String infile   = janrPath+"janr_input_e1b";
+	    public static String resfile  = janrPath+"res-q0.4.inp";
+	    public static String parifile = janrPath+"par_e1b.inp";
+	    public static String resifile = janrPath+"res-q0.4.inp";
 	
         public static final int MAX_PHI_INDEX = 6;
         public static final int MAX_IS_INDEX = 3;
         public static final int MAX_J_INDEX = 2;
+        
+ // MULTIPOL        
+        public static final String[] fnamr = {
+                "rm0p.dat","rm0m.dat","re0p.dat","re0m.dat","rs0p.dat","rs0m.dat",
+                "rm1p.dat","rm1m.dat","re1p.dat","re1m.dat","rs1p.dat","rs1m.dat",
+                "rm2p.dat","rm2m.dat","re2p.dat","re2m.dat","rs2p.dat","rs2m.dat",
+                "rm3p.dat","rm3m.dat","re3p.dat","re3m.dat","rs3p.dat","rs3m.dat"
+            };
+        
+        public static final String[] fnamhigh = {
+                "rm4p.dat","rm4m.dat","re4p.dat","re4m.dat","rs4p.dat","rs4m.dat",
+                "rm5p.dat","rm5m.dat","re5p.dat","re5m.dat","rs5p.dat","rs5m.dat"
+            };
+        
+        public static final String[] fnamrr = {
+                "rrm0p.dat","rrm0m.dat","rre0p.dat","rre0m.dat",
+                "rrs0p.dat","rrs0m.dat",
+                "rrm1p.dat","rrm1m.dat","rre1p.dat","rre1m.dat","rrs1p.dat","rrs1m.dat",
+                "rrm2p.dat","rrm2m.dat","rre2p.dat","rre2m.dat","rrs2p.dat","rrs2m.dat",
+                "rrm3p.dat","rrm3m.dat","rre3p.dat","rre3m.dat","rrs3p.dat","rrs3m.dat"
+            };
 	
 // AMPLITUDES
 	    public static final int MAX1res = 13;
@@ -37,30 +60,30 @@ public class Constants {
 
 	
 // BACK_AMP
-	    public static float[] BM3 = new float[8];
-	    public static float[] BE3 = new float[8];
-	    public static float[] BS3 = new float[8];
-	    public static float[] BbM3 = new float[8];
-	    public static float[] BbE3 = new float[8];
-	    public static float[] BbS3 = new float[8];
-	    public static float[] RM3 = new float[8];
-	    public static float[] RE3 = new float[8];
-	    public static float[] RS3 = new float[8];
+	    public static double[]  BM3 = new double[8];
+	    public static double[]  BE3 = new double[8];
+	    public static double[]  BS3 = new double[8];
+	    public static double[] BbM3 = new double[8];
+	    public static double[] BbE3 = new double[8];
+	    public static double[] BbS3 = new double[8];
+	    public static double[]  RM3 = new double[8];
+	    public static double[]  RE3 = new double[8];
+	    public static double[]  RS3 = new double[8];
 
-	    public static float[][] BM1 = new float[2][9];
-	    public static float[][] BE1 = new float[2][9];
-	    public static float[][] BS1 = new float[2][9];
-	    public static float[][] BbM1 = new float[2][9];
-	    public static float[][] BbE1 = new float[2][9];
-	    public static float[][] BbS1 = new float[2][9];
-	    public static float[][] RM1 = new float[2][9];
-	    public static float[][] RE1 = new float[2][9];
-	    public static float[][] RS1 = new float[2][9];
+	    public static double[][] BM1 = new double[2][9];
+	    public static double[][] BE1 = new double[2][9];
+	    public static double[][] BS1 = new double[2][9];
+	    public static double[][] BbM1 = new double[2][9];
+	    public static double[][] BbE1 = new double[2][9];
+	    public static double[][] BbS1 = new double[2][9];
+	    public static double[][] RM1 = new double[2][9];
+	    public static double[][] RE1 = new double[2][9];
+	    public static double[][] RS1 = new double[2][9];
 
-	    public static float[] E0 = new float[2];
-	    public static float[] M1 = new float[2];
-	    public static float[] S0 = new float[2];
-	    public static float[] S1 = new float[2];
+	    public static double[] E0 = new double[2];
+	    public static double[] M1 = new double[2];
+	    public static double[] S0 = new double[2];
+	    public static double[] S1 = new double[2];
 
 	
 // BORN_TERMS
@@ -68,30 +91,33 @@ public class Constants {
 		
 // CROSS_SEC 
 		/*
-		public static float[] sigmaT  = new float[3];
-		public static float[] sigmaL  = new float[3];
-		public static float[] sigmaTT = new float[3];
-		public static float[] sigmaTL = new float[3];
-		public static float[] sigma   = new float[3];
-		public static float[] sigmaP  = new float[3];
-		public static float[] sigmaI  = new float[3];
+		public static double[] sigmaT  = new double[3];
+		public static double[] sigmaL  = new double[3];
+		public static double[] sigmaTT = new double[3];
+		public static double[] sigmaTL = new double[3];
+		public static double[] sigma   = new double[3];
+		public static double[] sigmaP  = new double[3];
+		public static double[] sigmaI  = new double[3];
 */
 		
 // DELTA_DAT 
-		public static float[] xM  = new float[74];
-		public static float[] xE  = new float[74];
-		public static float[] xS  = new float[74];
-		public static float[] xOM = new float[74];
-		public static float[] xOE = new float[74];
-		public static float[] xOS = new float[74];
-		public static float[] xH  = new float[74];
-		public static float[] yM  = new float[74];
-		public static float[] yE  = new float[74];
-		public static float[] yS  = new float[74];
-		public static float[] yOM = new float[74];
-		public static float[] yOE = new float[74];
-		public static float[] yOS = new float[74];
-		public static float[] yH  = new float[74];
+		public static double[] xM  = new double[74];
+		public static double[] xE  = new double[74];
+		public static double[] xS  = new double[74];
+		public static double[] xOM = new double[74];
+		public static double[] xOE = new double[74];
+		public static double[] xOS = new double[74];
+		public static double[] xH  = new double[74];
+		public static double[] yM  = new double[74];
+		public static double[] yE  = new double[74];
+		public static double[] yS  = new double[74];
+		public static double[] yOM = new double[74];
+		public static double[] yOE = new double[74];
+		public static double[] yOS = new double[74];
+		public static double[] yH  = new double[74];
+		
+// EBAC
+		
 
 // ETTAPAR 
 	   public static double[][] ett = {
@@ -107,10 +133,10 @@ public class Constants {
 	    public static final int f_out = 49;
 	    
 	    public static String[]      pname = new String[MAXpar];
-	    public static float[] start_value = new float[MAXpar];
-	    public static float[]   step_size = new float[MAXpar];
-	    public static float[]     low_lim = new float[MAXpar];
-	    public static float[]      up_lim = new float[MAXpar];
+	    public static double[] start_value = new double[MAXpar];
+	    public static double[]   step_size = new double[MAXpar];
+	    public static double[]     low_lim = new double[MAXpar];
+	    public static double[]      up_lim = new double[MAXpar];
 	    public static int[]      par_stat = new int[MAXpar];
 	    public static int[]         plist = new int[MAXpar];
 	    
@@ -137,55 +163,55 @@ public class Constants {
 	    public static double cmp11,cep11;
 	    public static double cspa, a_pip;
 	    
-	    public static float ChiMax;
-	    public static float fix_param;
-	    public static float tolorance;
-	    public static float maxcalls;
-	    public static float errorup;
+	    public static double ChiMax;
+	    public static double fix_param;
+	    public static double tolorance;
+	    public static double maxcalls;
+	    public static double errorup;
 	
 // GPAR 
 		public static double w2,E,Egamma,Epion,m2pion,q2pion,meta,qeta;
 		public static double pi,a2,mn,mp,mn22,mp22,mn2,u,t,qk,F2p,F2n;
 	
 // HELICITY 
-		public static float [][]  h1 = new float[3][2];
-		public static float [][]  h2 = new float[3][2];
-		public static float [][]  h3 = new float[3][2];
-		public static float [][]  h4 = new float[3][2];
-		public static float [][]  h5 = new float[3][2];
-		public static float [][]  h6 = new float[3][2];
-		public static float [][] sig = new float[3][2];
+		public static double [][]  H1 = new double[3][2];
+		public static double [][]  H2 = new double[3][2];
+		public static double [][]  H3 = new double[3][2];
+		public static double [][]  H4 = new double[3][2];
+		public static double [][]  H5 = new double[3][2];
+		public static double [][]  H6 = new double[3][2];
+		public static double [][] sig = new double[3][2];
 	
 //  HIGHMUL 
-		public static float [][] phih = new float[6][3];
-		public static float[]     E4m = new float[3];
-		public static float[]     E4p = new float[3];
-		public static float[]     M4m = new float[3];
-		public static float[]     M4p = new float[3];
-		public static float[]     S4m = new float[3];
-		public static float[]     S4p = new float[3];
-		public static float[]     E5m = new float[3];
-		public static float[]     E5p = new float[3];
-		public static float[]     M5m = new float[3];
-		public static float[]     M5p = new float[3];
-		public static float[]     S5m = new float[3];
-		public static float[]     S5p = new float[3];
+		public static double [][] phih = new double[6][3];
+		public static double[]     E4m = new double[3];
+		public static double[]     E4p = new double[3];
+		public static double[]     M4m = new double[3];
+		public static double[]     M4p = new double[3];
+		public static double[]     S4m = new double[3];
+		public static double[]     S4p = new double[3];
+		public static double[]     E5m = new double[3];
+		public static double[]     E5p = new double[3];
+		public static double[]     M5m = new double[3];
+		public static double[]     M5p = new double[3];
+		public static double[]     S5m = new double[3];
+		public static double[]     S5p = new double[3];
 	
 // IMA 
-		public static float [][] ba = new float[6][3];
+		public static double [][] ba = new double[6][3];
 			
 // IFINTG
-//		public static float lm,is,i,j,w,q2;
+//		public static double lm,is,i,j,w,q2;
 		
 // INPAR
 		public static String 	fitopt;
 		public static String 	grfopt;
-		public static float 	n1;
-		public static float 	n2;
+		public static double 	n1;
+		public static double 	n2;
 		public static int   	nebac;
 		
 // INT_FUNC
-		public static float[][] h = new float[6][3];
+		public static double[][] h = new double[6][3];
 		public static int jk,km;
 		
 // JANR_DATA
@@ -208,20 +234,20 @@ public class Constants {
 	    public static final int MAX_COS_GRID = 20;
 	    public static final int MAX_PHI_GRID = 30;
 
-	    public static float wmin;
-	    public static float wmax;
-	    public static float wstep;
-	    public static float q2min;
-	    public static float q2max;
-	    public static float q2step;
-	    public static float cosmin;
-	    public static float cosmax;
-	    public static float cosstep;
-	    public static float phimin;
-	    public static float phimax;
-	    public static float phistep;
-	    public static float ebeam;
-	    public static float IntAccur;
+	    public static double wmin;
+	    public static double wmax;
+	    public static double wstep;
+	    public static double q2min=0;
+	    public static double q2max=1;
+	    public static double q2step;
+	    public static double cosmin;
+	    public static double cosmax;
+	    public static double cosstep;
+	    public static double phimin;
+	    public static double phimax;
+	    public static double phistep;
+	    public static double ebeam;
+	    public static double IntAccur;
 
 	    public static double[][][][] csTab = new double[MAX_Q2_GRID][MAX_W_GRID][MAX_COS_GRID][MAX_PHI_GRID];
 
@@ -231,28 +257,27 @@ public class Constants {
 // MULTAMPL
 	    public static final int Maxmpoints = 101;
 
-	    public static double[] Wtab = new double[Maxmpoints];
+	    public static double[] wtab = new double[Maxmpoints];
 	    
-	    public static double[][][] AEm = new double[Maxmpoints][6][3];
-	    public static double[][][] AEp = new double[Maxmpoints][6][3];
+	    public static double[][][] aem = new double[Maxmpoints][6][3];
+	    public static double[][][] aep = new double[Maxmpoints][6][3];
 	    
-	    public static double[][][] ASm = new double[Maxmpoints][6][3];
-	    public static double[][][] ASp = new double[Maxmpoints][6][3];
+	    public static double[][][] asm = new double[Maxmpoints][6][3];
+	    public static double[][][] asp = new double[Maxmpoints][6][3];
 	    
-	    public static double[][][] AMm = new double[Maxmpoints][6][3];
-	    public static double[][][] AMp = new double[Maxmpoints][6][3];
+	    public static double[][][] amm = new double[Maxmpoints][6][3];
+	    public static double[][][] amp = new double[Maxmpoints][6][3];
 	    
-	    public static double[][][] RAEm = new double[Maxmpoints][4][3];
-	    public static double[][][] RAEp = new double[Maxmpoints][4][3];
+	    public static double[][][] raem = new double[Maxmpoints][4][3];
+	    public static double[][][] raep = new double[Maxmpoints][4][3];
 	    
-	    public static double[][][] RASm = new double[Maxmpoints][4][3];
-	    public static double[][][] RASp = new double[Maxmpoints][4][3];
+	    public static double[][][] rasm = new double[Maxmpoints][4][3];
+	    public static double[][][] rasp = new double[Maxmpoints][4][3];
 	    
-	    public static double[][][] RAMm = new double[Maxmpoints][4][3];
-	    public static double[][][] RAMp = new double[Maxmpoints][4][3];
+	    public static double[][][] ramm = new double[Maxmpoints][4][3];
+	    public static double[][][] ramp = new double[Maxmpoints][4][3];
 	    
-// MULTIPOLES
-	    
+// MULTIPOLES	    
 	    public static final int ROWS = 2;
 	    public static final int COLS = 2;
 
@@ -278,10 +303,18 @@ public class Constants {
 	    public static double[][] ReacS6 = new double[ROWS][COLS];
 	    public static double[][] ReacS7 = new double[ROWS][COLS];
 	    
+	    public static double[][] MM3 = new double[2][8]; 
+	    public static double[][] ME3 = new double[2][8]; 
+	    public static double[][] MS3 = new double[2][8]; 
+	    public static double[][][] MM1 = new double[2][2][9]; 
+	    public static double[][][] ME1 = new double[2][2][9]; 
+	    public static double[][][] MS1 = new double[2][2][9]; 
+
+	    
 	    public static final int N51 = 51;
 	    public static final int N13 = 13;
 	    	    
-	    public static double[] wsa = new double[N51];
+	    public static double[] WSa = new double[N51];
 	    
 	    public static double[] mp33r = new double[N51];
 	    public static double[] mp33i = new double[N51];
@@ -329,13 +362,13 @@ public class Constants {
 	    public static double[][][] phi_amp = new double[6][2][3];
 	    
 // REMULT
-	    public static float[][][][] Rint = new float[6][3][6][2];  
-	    public static float[][][]    Mlp = new float[6][3][2];
-	    public static float[][][]    Mlm = new float[6][3][2];
-	    public static float[][][]    Elp = new float[6][3][2];
-	    public static float[][][]    Elm = new float[6][3][2];
-	    public static float[][][]    Slp = new float[6][3][2];
-	    public static float[][][]    Slm = new float[6][3][2];
+	    public static double[][][][] Rint = new double[6][3][6][2];  
+	    public static double[][][]    Mlp = new double[6][3][2];
+	    public static double[][][]    Mlm = new double[6][3][2];
+	    public static double[][][]    Elp = new double[6][3][2];
+	    public static double[][][]    Elm = new double[6][3][2];
+	    public static double[][][]    Slp = new double[6][3][2];
+	    public static double[][][]    Slm = new double[6][3][2];
 	    
 // REPHI 
 	    public static double[][][] PHisot = new double[2][6][3];  
@@ -370,11 +403,11 @@ public class Constants {
 	    public static double[] gres = new double[MAXres];
 	    public static double[] xres = new double[MAXres];
 	    public static double[]  eta = new double[MAXres];
-	    public static double[] lres = new double[MAXres];
 	    
 	    public static int[] langul = new int[MAXres];
 	    public static int[] lprime = new int[MAXres];
 	    public static int[]   jres = new int[MAXres];
 	    public static int[]   ires = new int[MAXres];
+	    public static int[]   lres = new int[MAXres];
 	    	
 }
