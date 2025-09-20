@@ -1,17 +1,22 @@
 package org.clas.lib;
 
+import java.util.List;
+import org.jlab.groot.math.Func1D;
+
 public class Janr03 extends Constants {
 	
     Reader          r = new Reader();
     Writer          w = new Writer();
     JanrIniPoint  jip = new JanrIniPoint();
+    JanrRun        jr = new JanrRun();
 
     public Janr03() {
-    	janr_main();
+        janr_init();
     }
         
-    public void janr_main() {
+    public void janr_init() {
 
+    	System.out.println("Janr03.janr_init() Starting\n");
         r.InputFile(infile);
         r.ResonanceData(resifile);
         r.ParFile(parifile); 
@@ -35,7 +40,22 @@ public class Janr03 extends Constants {
         case "T": janrOutput(); break;
         case "M": janrOutputMpole();      
         }
+    	System.out.println("Janr03.janr_init() Finished\n");
 
+    }
+    
+    public class JanrFunc extends Func1D {
+    	
+    	public JanrFunc(String name, double min, double max) {
+    		super(name, min, max);    		
+    	}
+    	
+    	@Override
+    	public double evaluate(double x) {
+    		double sum = 0.0;
+    		return sum;
+    	}
+    	
     }
 
     private static void janrFit() {
@@ -50,7 +70,7 @@ public class Janr03 extends Constants {
     	
     }
     
-    private static void hjanrInit(String[] fname) {
+    private static void hjanrInit(List fname) {
     	
     }
     	
