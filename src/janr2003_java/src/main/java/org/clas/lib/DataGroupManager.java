@@ -28,7 +28,7 @@ public class DataGroupManager {
 	
 	DataGroup dg = null;
 	String   tag = null;
-	int  ilist[] = null, n=0;
+	int  ilist[] = null, n=0, nsave=0;
 	public double zMin=0, zMax=0;
     public Boolean  doAutoRange = false;
 	public Boolean detectorLogY = false;
@@ -37,6 +37,11 @@ public class DataGroupManager {
 	public DataGroupManager() {
 		
 	}
+
+    public void setDetectorTabNames(String... names) {
+        setDetectorCanvas(new EmbeddedCanvasTabbed(names));    	      
+        for(String name : names) detectorTabNames.add(name);     
+    }
 	
 	public void add(String name, int row, int col, int is, int st, int run) {
 		dg = new DataGroup(row,col); 
@@ -47,20 +52,11 @@ public class DataGroupManager {
 		detectorData.add(dg,ilist); 
 		n=0;
 	}
-	
-	public DataGroup setDataGroup(String name, int is, int st, int run) {
-		return detectorData.getItem(is,st,detectorTabNames.indexOf(name),run);
-	}
 
 	public void setDetectorCanvas(EmbeddedCanvasTabbed canvas) {
 		detectorCanvas = canvas;
 	}
-	
-    public void setDetectorTabNames(String... names) {
-        setDetectorCanvas(new EmbeddedCanvasTabbed(names));    	      
-        for(String name : names) detectorTabNames.add(name);     
-    }
-    
+
     public void setLogY(boolean val) {
 	    detectorLogY = val;
     }
@@ -80,6 +76,10 @@ public class DataGroupManager {
     public IndexedList<DataGroup> getDataGroup(){
         return detectorData;
     }
+
+	public DataGroup getDataGroup(String name, int is, int st, int run) {
+		return detectorData.getItem(is,st,detectorTabNames.indexOf(name),run);
+	}
     
     public ArrayList<String> getDetectorTabNames() {
         return detectorTabNames;
@@ -274,23 +274,50 @@ public class DataGroupManager {
     
     public void makeF1D(String name, String f, double x1, double x2, double val) {
     	F1D f1 = new F1D(name,f,x1,x2); if(val!=-1) f1.setParameter(0,val);
-    	dg.addDataSet(f1, n-1);
+    	f1.getAttributes().setDrawOptions("sameL");
+    	dg.addDataSet(f1, n);
     }
     
     public void makeGE(String name, int f, String tit, String titx, String tity, int ... options) {
-    	GraphErrors graph = new GraphErrors();
+    	GraphErrors graph = new GraphErrors(); 
     	graph.setName(getName(name)); 
     	graph.setTitle(tit); graph.setTitleX(titx); graph.setTitleY(tity);
     	int nn=0;
+    	if(f==-2) graph.getAttributes().setDrawOptions("sameL");
+    	for (int opt : options) {
+    		if(nn==0) graph.setMarkerColor(opt); graph.setLineColor(1);
+    		if(nn==1) graph.setMarkerSize(opt); 
+    		if(nn==2) graph.setMarkerStyle(opt); 
+    		if(nn==3) graph.setLineColor(opt);
+    		nn++;
+    	}
+     	dg.addDataSet(graph, (f==-2) ? n-1:n++);	   	
+    }
+    
+    public void makeGE(String name) {
+    	GraphErrors graph = new GraphErrors();
+    }
+    
+    public void makeGE(String name, int f, double x, double y, String tit, String titx, String tity, int ... options) {
+    	GraphErrors graph = new GraphErrors(); 
+    	graph.setName(getName(name)); 
+    	graph.setTitle(tit); graph.setTitleX(titx); graph.setTitleY(tity); 
+    	int nn=0;
     	if(f==-2) graph.getAttributes().setDrawOptions("same");
     	for (int opt : options) {
-    		if(nn==0) {graph.setMarkerColor(opt); graph.setLineColor(1);}
+    		if(nn==0){graph.setMarkerColor(opt); graph.setLineColor(1);}
     		if(nn==1) graph.setMarkerSize(opt); 
     		if(nn==2) graph.setMarkerStyle(opt); 
     		if(nn==3) graph.getAttributes().setDrawOptions("sameL");
     		nn++;
-    	}    	
-    	dg.addDataSet(graph, (f==-2)? n-1: n++);
+    	}  
+    	dg.addDataSet(graph, (f==-2)? n-1: n++); 
+    	
+    	if (f==-1) {
+    		F1D f1 = new F1D(name,"[a]",x,y); f1.setParameter(0,1);
+    		f1.getAttributes().setDrawOptions("sameL");
+    		dg.addDataSet(f1, n-1);   
+    	}
     }
     
     public void addDataSet(IDataSet ds, int f) {
@@ -300,8 +327,8 @@ public class DataGroupManager {
     //DATAGROUP HELPERS	    
 
     // custom configuration: associates canvas based drawing options with IDataSet object name
-	public void cc(String name, boolean linlogy, boolean linlogz, float ymin, float ymax, float zmin, float zmax) {
-		Object[] obj = {linlogy,linlogz,ymin,ymax,zmin,zmax};
+	public void cc(String name, boolean linlogy, boolean linlogz, float xmin, float xmax, float ymin, float ymax, float zmin, float zmax) {
+		Object[] obj = {linlogy,linlogz,xmin,xmax,ymin,ymax,zmin,zmax};
 		map.put(hmap.get(name),obj);  
 	}
 	
@@ -311,9 +338,11 @@ public class DataGroupManager {
 		Object[] can = map.get(name);            
 		canvas.getPad().getAxisY().setLog((Boolean)can[0]);               
 		canvas.getPad().getAxisZ().setLog((Boolean)can[1]);            
-		float ymin=(float)can[2], ymax=(float)can[3], zmin=(float)can[4], zmax=(float)can[5];  
-		if(ymin!=ymax) canvas.getPad().getAxisY().setRange(ymin,ymax);                
-		if(zmin!=zmax) canvas.getPad().getAxisZ().setRange(zmin,zmax);                
+		float x1=(float)can[2], x2=(float)can[3], y1=(float)can[4], y2=(float)can[5], z1=(float)can[6], z2=(float)can[7];  
+		if(x1!=x2) canvas.getPad().getAxisX().setRange(x1,x2);                
+		if(y1!=y2) canvas.getPad().getAxisY().setRange(y1,y2);                
+		if(z1!=z2) canvas.getPad().getAxisZ().setRange(z1,z2); 
+		canvas.getPad().getAxisX().getAttributes().setTitleFontSize(11);             
 		return true;
 	}
 	
