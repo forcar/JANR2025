@@ -2,8 +2,10 @@ package org.clas.lib;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Reader extends Constants {
@@ -29,7 +31,9 @@ public class Reader extends Constants {
 	
     public void InputFile(String file) {
         System.out.println("Janr03.Reader.InputFile("+file+")");
-        try (Scanner fileScanner = new Scanner(new File(file))) {
+        try {
+            Scanner fileScanner = new Scanner(new File(file));
+        	while (fileScanner.hasNextLine()) {
                fitopt = fileScanner.next();  
                grfopt = fileScanner.next();  
                    n1 = fileScanner.nextInt();  
@@ -63,10 +67,16 @@ public class Reader extends Constants {
                 lmino = fileScanner.nextInt();
                 lminf = fileScanner.nextInt();
                ChiMax = fileScanner.nextFloat(); 
-            for (int i = 0; i < 4; i++) fname[i] = fileScanner.next(); 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }    	    	
+            for (int i = 0; i < 10; i++) fname.add(fileScanner.next());
+        	} 
+        	fileScanner.close();
+        } catch (NoSuchElementException e) {
+        } catch (FileNotFoundException e) {
+        	e.printStackTrace();
+        }
+
+        nplt = fname.size();
+
     }
        
     public void ParFile(String file) {
@@ -81,6 +91,7 @@ public class Reader extends Constants {
                        par_stat[i] = parScanner.nextInt();
                         low_lim[i] = parScanner.nextFloat();
                          up_lim[i] = parScanner.nextFloat();
+                       res_name[i] = parScanner.next();
             if(debug) System.out.println(plist[i]+" "+pname[i]+" "+start_value[i]+" "+step_size[i]+" "+par_stat[i]+" "+low_lim[i]+" "+up_lim[i]);
                 }
             } else {
@@ -91,9 +102,9 @@ public class Reader extends Constants {
             e.printStackTrace();
         } 
     	
-        cm1  = start_value[0];
-        ce1  = start_value[1];
-        cs1  = start_value[2];
+         cm1 = start_value[0];
+         ce1 = start_value[1];
+         cs1 = start_value[2];
         cmp1 = start_value[3];
         csp1 = start_value[4];
         cep2 = start_value[5];
@@ -116,11 +127,17 @@ public class Reader extends Constants {
         csp8 = start_value[22];
         cmp9 = start_value[23];
         cep9 = start_value[24];
-        cmp10 = start_value[25];
-        cep10 = start_value[26];
-        cmp11 = start_value[27];
-        cep11 = start_value[28];
-        cspa  = start_value[29];
+       cmp10 = start_value[25];
+       cep10 = start_value[26];
+       cmp11 = start_value[27];
+       cep11 = start_value[28];
+         cm2 = start_value[29];
+         ce2 = start_value[30];
+         cs2 = start_value[31];
+         cm3 = start_value[32];
+         ce3 = start_value[33];
+         cs3 = start_value[34];
+        cspa = start_value[35];
     }
     
     public void ResonanceData(String file) {
@@ -194,15 +211,15 @@ public class Reader extends Constants {
         // E(l-) l=1: Lprime(i)=l for E(l-)   
         
         for (int i = 0; i < MAXres; i++) { //[0] not used since indices are hard-coded later
-            int ii = (int) resdat[0][i];
-            if (ii < 0 || ii >= MAXres) continue; 
+             int ii  = (int) resdat[0][i];
+             if (ii < 0 || ii >= MAXres) continue; 
             ires[ii] = (int) resdat[1][i];
             jres[ii] = (int) resdat[2][i];
             lres[ii] = (int) resdat[3][i];
-            mres[ii] = resdat[4][i] / 1000.0;
-            gres[ii] = resdat[5][i] / 1000.0;
-             eta[ii] = resdat[6][i];
-            xres[ii] = resdat[7][i];
+            mres[ii] =       resdat[4][i] / 1000.0;
+            gres[ii] =       resdat[5][i] / 1000.0;
+             eta[ii] =       resdat[6][i];
+            xres[ii] =       resdat[7][i];
           langul[ii] = (int) resdat[8][i];
           lprime[ii] = (int) resdat[9][i];
         }
