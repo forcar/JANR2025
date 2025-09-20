@@ -2,15 +2,21 @@ package org.clas.lib;
 
 public class JanrRun extends Constants {
 
-    // Saved state across calls (corresponds to FORTRAN SAVE)
     private static double wsave = -1.0;
     private static double qsave = -1.0;
     private static double csave = -2.0;
     private static double phid  =  0.0;
     
-
     JanrIniPoint jini = new JanrIniPoint();
     POLINT          p = new POLINT();
+    boolean      test = false;
+    
+    public double[] Breit = new double[2];
+    public double    rv[] = new double[1];
+        
+    public JanrRun() {
+    	
+    }
 
     public void janrRun(double wi,
                         double Q2i,
@@ -19,29 +25,29 @@ public class JanrRun extends Constants {
                         double phidi,
                         boolean iupd) {
 
+        double phi = (float) (phidi * pi / 180.0);
+        double q2,q22,k22, qpion, qkratio, kgamma, E2pion, Eeta; 
+        double s=0, w=0, theta=0, costh=0;
+
         boolean okWsave = (wi   == wsave);
         boolean okQsave = (Q2i  == qsave);
         boolean okCsave = (costhi == csave);
-        boolean skip    = okWsave && okQsave && okCsave;
+        boolean skip    = okWsave && okCsave && okQsave;
+   
+//        if (!okQsave) jini.janrIniPoint(Q2i);
 
         wsave = wi;
         qsave = Q2i;
         csave = costhi;
         phid  = phidi;
-
-        double phi = (float) (phidi * pi / 180.0);
-        double q22, k22, qpion, qkratio, kgamma, E2pion, Eeta;
-
-        // If no update requested and inputs match previous, skip heavy work
-        double s=0, w=0, theta=0, costh=0, q2=0;
         
-        if (!( !iupd && skip )) {       	
+        if (!( !iupd && skip )) {  	
             w     = wi;
-            q2    = Q2i;
+            q2    = Q2i;            
             costh = costhi;
-
-            jini.janrIniPoint(q2); 
-
+            
+            jini.janrIniPoint(q2);
+            
             theta = (float) Math.acos(costh);
             theta = (float) (theta * 180.0 / pi);
             
@@ -132,7 +138,8 @@ public class JanrRun extends Constants {
                 
                 phi_amp[3][i][j] = -3.0 * (ReacM4[i][j] + ReacE4[i][j])
                     +               3.0 * (ReacM5[i][j] - ReacE5[i][j])
-                    - p4 *                 ReacM6[i][j] + ReacE6[i][j]
+//                  - p4 *                 ReacM6[i][j] + ReacE6[i][j]    //no parentheses
+                    - p4 *                     E1[i][j]                   //lcs 8.29.2025 
                     + p4 *                (ReacM7[i][j] - ReacE7[i][j]);
                 
                 phi_amp[4][i][j] = ReacS1[i][j] + 2.0f * p1 * ReacS3[i][j]
@@ -220,8 +227,8 @@ public class JanrRun extends Constants {
                 BrE1[i][j][6] = BreitE1[i][j][6] + BreitE1[i][j][10];
                 BrS1[i][j][6] = BreitS1[i][j][6] + BreitS1[i][j][10];
 
-                BrE1[i][j][1] = BreitE1[i][j][1] + BreitE1[i][j][4];      
-                BrS1[i][j][1] = BreitS1[i][j][1] + BreitS1[i][j][4];
+                BrE1[i][j][1] = BreitE1[i][j][1] + BreitE1[i][j][4]; //[1] is wrong     
+                BrS1[i][j][1] = BreitS1[i][j][1] + BreitS1[i][j][4]; //[1] is wrong
 
                 BrM1[i][j][0] = BreitM1[i][j][0] + BreitM1[i][j][9];    
                 BrS1[i][j][0] = BreitS1[i][j][0] + BreitS1[i][j][9];
@@ -312,7 +319,7 @@ public class JanrRun extends Constants {
         
         //n1=1 (background on) n2=1 (resonance on) EBr1=EBAC phase
         for (int j = 0; j < 9; j++) {
-            for (int i = 0; i < 2; i++) { // Re(0) Im(1)           	
+            for (int i = 0; i < 2; i++) { // pA(1/2) (i=0) nA(1/2) (i=1)           	
                 MM1[0][i][j] = n1 * BM1[i][j] * (1.0 - Br1[1][j]) + n2 * BrM1[0][i][j] * EBr1[0][j];
                 ME1[0][i][j] = n1 * BE1[i][j] * (1.0 - Br1[1][j]) + n2 * BrE1[0][i][j] * EBr1[0][j];
                 MS1[0][i][j] = n1 * BS1[i][j] * (1.0 - Br1[1][j]) + n2 * BrS1[0][i][j] * EBr1[0][j];
@@ -359,11 +366,19 @@ public class JanrRun extends Constants {
         ME3[1][0] = n1 * BE3[0] *        Br3[0][0]  + n2 * BrE3[1][0];
         MS3[1][0] = n1 * BS3[0] *        Br3[0][0]  + n2 * BrS3[1][0];
         
-        // Note RMP33 and IMP33 are previously defined shape for M1+
+        // Note RMP33 and IMP33 are previously defined shape for M1+ which
+        // was determined from fits to Q2=0 VPI M1+ data in PRC 67, 015209 (2003).
+        // Shape follows description of modified B-W and Regge modified backgrounds
+        // described in Eq. 16-17 of paper.  resM is GM* parameterization defined 
+        // in janr_ini_point.F   
+        
         MM3[0][0] = resM * RMP33;
         MM3[1][0] = resM * IMP33;
         
         // Empirical adjustment to shape of D(1232) away from resonance position
+        // These parameters are intended to be used for Q2=0.4 fits.
+        // This commented code is omitted in this java version
+        
         if (WW <= 1.2283) {
             for (int i = 0; i < 2; i++) {
                 MM3[i][0] = MM3[i][0] * Math.pow(WW / 1.2283, cm2);
@@ -388,7 +403,7 @@ public class JanrRun extends Constants {
             MS3[1][j] = n1 * BS3[j] *        Br3[0][j]  + n2 * BrS3[1][j]; 
         }
         
-        coeff = 1.0; // units mFm
+        coeff = 1.0; // units mFm/10 ?
         
         for (int j = 0; j < 9; j++) {
             for (int i = 0; i < 2; i++) {
@@ -408,7 +423,7 @@ public class JanrRun extends Constants {
             }
         }
         
-        // ReacM1(i,j)=0+	i=1,2 for Re,Im;	j=1,2 for pi0,pi+	 
+        // ReacM1(i,j)=0+	i=0,1 for Re,Im;	j=0,1 for pi0,pi+	 
         // ReacM2(i,j)=1-
         // ReacM3(i,j)=1+
         // ReacM4(i,j)=2-
@@ -542,8 +557,8 @@ public class JanrRun extends Constants {
     
     private void breitAmpl(double s, double q2, double kgamma, double qpion) {
     	
-        double[] Breit = new double[2];
-        double    rv[] = new double[1];
+//        double[] Breit = new double[2];
+//        double    rv[] = new double[1];
         
         // Isospin 3/2 resonances (i=1 to 6)
         for (int i = 0; i < 6; i++) {
@@ -557,7 +572,8 @@ public class JanrRun extends Constants {
         }
         
         // Zero out remaining elements (i=7 to 13)
-        for (int i = 6; i < 13; i++) {
+//        for (int i = 6; i < 13; i++) {
+        for (int i = 7; i < 13; i++) {
             for (int j = 0; j < 2; j++) {
                 BreitE3[j][i] = 0.0f;
                 BreitM3[j][i] = 0.0f;
@@ -568,18 +584,23 @@ public class JanrRun extends Constants {
         // Isospin 1/2 resonances (i=1 to 10)
         for (int i = 0; i < 10; i++) {
             int ii = i + 21; 
-            Breit = getBreit(s, q2, kgamma, qpion, ii, rv);            
+            Breit = getBreit(s, q2, kgamma, qpion, ii, rv); 
             for (int k = 0; k < 2; k++) { // pA(1/2) (k=0), nA(1/2) (k=1)
                 for (int j = 0; j < 2; j++) { // real (j=0), imag (j=1)
                     BreitE1[j][k][i] = Breit[j] * ae1[k][i];
                     BreitM1[j][k][i] = Breit[j] * am1[k][i];
                     BreitS1[j][k][i] = Breit[j] * as1[k][i] * rv[0];
+//                    if (test && (i==0||i==1||i==2)) {
+//                    	System.out.println(j+" "+k+" "+i+" "+(float)BreitE1[j][k][i]+" "+(float)Breit[j]+" "+ae1[k][i]);
+//                    	System.out.println(j+" "+k+" "+i+" "+(float)BreitS1[j][k][i]+" "+(float)Breit[j]+" "+as1[k][i]+" "+rv[0]);
+//                    }
                 }
             }
         }
         
         // Zero out remaining elements (i=11 to 13)
-        for (int i = 10; i < 13; i++) {
+//        for (int i = 10; i < 13; i++) {
+        for (int i = 11; i < 13; i++) {
             for (int k = 0; k < 2; k++) {
                 for (int j = 0; j < 2; j++) {
                     BreitE1[j][k][i] = 0.0f;
@@ -620,7 +641,7 @@ public class JanrRun extends Constants {
             if (ww < (mn + meta)) wthr = 0.0;
             eeta  = (m22 + meta*meta - mn22) / m2;
             qreta = eeta*eeta - meta*meta;
-            qeta  = Math.sqrt(Math.max(0, eeta*eeta - meta*meta));
+//            qeta  = Math.sqrt(Math.max(0, eeta*eeta - meta*meta));
             reta  = Math.abs(qeta / qreta);
             reta  = Math.sqrt(reta);
         }
@@ -903,11 +924,9 @@ public class JanrRun extends Constants {
     	
     	int kpower=8,jw,minp,maxp,mwp=1;
     	
-        // Arrays for interpolation
         double[] tmult = new double[8];
         double[]    wx = new double[8];
 
-        // Output arrays for intermediate results
         double[][] bem = new double[4][3];
         double[][] bep = new double[4][3];
         double[][] bmm = new double[4][3];
@@ -939,8 +958,10 @@ public class JanrRun extends Constants {
         
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 3; j++) {
+            	
                 // E"l"m
                 jw = 0;
+                
                 for (int iw = minp - 1; iw < maxp; iw++) {
                     tmult[jw] = aem[iw][i][j];
                     wx[jw] = wtab[iw];
@@ -1126,9 +1147,8 @@ public class JanrRun extends Constants {
     
     public void backRegge(double s, double q2) {
     	
-        int mwp = 1, minp, maxp;
-        final int kpower = 8;        
-        double wpoint;
+        int kpower=8,jw,minp,maxp,mwp = 1;  
+        
         double[] tmult = new double[8];
         double[] wx = new double[8];
 
@@ -1139,15 +1159,17 @@ public class JanrRun extends Constants {
         double[][] bsm = new double[4][3];
         double[][] bsp = new double[4][3];
         
-        wpoint = Math.sqrt(s);
+        double wpoint = Math.sqrt(s);
         
-        for (int iw = 1; iw < Maxmpoints; iw++) {
+        for (int iw = 0; iw < Maxmpoints; iw++) {
             if (wpoint < wtab[iw] && mwp == 1) {
                 mwp = iw;
                 break;
             }
         }
+        
         minp = mwp - 3;
+        
         if (minp <= 0) {
             minp = 1;
             maxp = 8;
@@ -1161,10 +1183,8 @@ public class JanrRun extends Constants {
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 3; j++) {
-            	
-                int jw = 0;
-
-                // E"l"m
+                // E"l"m            	
+                jw = 0;
                 for (int iw = minp-1; iw < maxp; iw++) {
                     tmult[jw] = raem[iw][i][j];
                     wx[jw] = wtab[iw];
@@ -1352,7 +1372,9 @@ public class JanrRun extends Constants {
     	
     	int kpower=8,jw,minp,maxp,mwp=1;
     	
-        // Arrays for intermediate results
+        double[] tmult = new double[kpower];
+        double[] wx = new double[kpower];
+    	
         double[][] bem = new double[2][3];
         double[][] bep = new double[2][3];
         double[][] bmm = new double[2][3];
@@ -1360,12 +1382,9 @@ public class JanrRun extends Constants {
         double[][] bsm = new double[2][3];
         double[][] bsp = new double[2][3];
 
-        double[] tmult = new double[kpower];
-        double[] wx = new double[kpower];
-    	
         double wpoint = Math.sqrt(s);
 
-        for (int iw = 1; iw < Maxmpoints; iw++) {
+        for (int iw = 0; iw < Maxmpoints; iw++) {
             if (wpoint < wtab[iw] && mwp == 1) {
                 mwp = iw;
                 break;
@@ -1389,7 +1408,7 @@ public class JanrRun extends Constants {
             for (int j = 0; j < 3; j++) {
                 // E"l"m
                 jw = 0;
-                for (int iw = minp; iw <= maxp; iw++) {
+                for (int iw = minp-1; iw < maxp; iw++) {
                     tmult[jw] = aem[iw][i][j];
                     wx[jw] = wtab[iw];
                     jw++;
@@ -1398,7 +1417,7 @@ public class JanrRun extends Constants {
 
                 // E"l"p
                 jw = 0;
-                for (int iw = minp; iw <= maxp; iw++) {
+                for (int iw = minp-1; iw < maxp; iw++) {
                     tmult[jw] = aep[iw][i][j];
                     jw++;
                 }
@@ -1406,7 +1425,7 @@ public class JanrRun extends Constants {
 
                 // M"l"m
                 jw = 0;
-                for (int iw = minp; iw <= maxp; iw++) {
+                for (int iw = minp-1; iw < maxp; iw++) {
                     tmult[jw] = amm[iw][i][j];
                     jw++;
                 }
@@ -1414,7 +1433,7 @@ public class JanrRun extends Constants {
 
                 // M"l"p
                 jw = 0;
-                for (int iw = minp; iw <= maxp; iw++) {
+                for (int iw = minp-1; iw < maxp; iw++) {
                     tmult[jw] = amp[iw][i][j];
                     jw++;
                 }
@@ -1422,7 +1441,7 @@ public class JanrRun extends Constants {
 
                 // S"l"m
                 jw = 0;
-                for (int iw = minp; iw <= maxp; iw++) {
+                for (int iw = minp-1; iw < maxp; iw++) {
                     tmult[jw] = asm[iw][i][j];
                     jw++;
                 }
@@ -1430,7 +1449,7 @@ public class JanrRun extends Constants {
 
                 // S"l"p
                 jw = 0;
-                for (int iw = minp; iw <= maxp; iw++) {
+                for (int iw = minp-1; iw < maxp; iw++) {
                     tmult[jw] = asp[iw][i][j];
                     jw++;
                 }
@@ -1651,7 +1670,7 @@ public class JanrRun extends Constants {
             	
         double    mnuc = 0.93827;
         double[] mpion = {0.13498, 0.13957};
-
+        
         vl   = eps;
         vtt  = eps;
         vlt  = Math.sqrt(2 * eps * (1 + eps));
@@ -1663,7 +1682,7 @@ public class JanrRun extends Constants {
 
         for (int i = 0; i < 2; i++) { //i=0: p-pi0 i=1: n-pi+
             qpi = Math.sqrt(Math.pow((s - mnuc * mnuc + mpion[i] * mpion[i]) / 2.0, 2) / s - mpion[i] * mpion[i]);
-            qkratio = qpi / ((s - mnuc * mnuc) / 2.0 / Math.sqrt(s));
+            qkratio = qpi / ((s - mnuc * mnuc) / 2. / Math.sqrt(s));
 
             sigmaT[i] = 0.0;
             sigmaL[i] = 0.0;
@@ -1671,7 +1690,7 @@ public class JanrRun extends Constants {
             sigmaTL[i] = 0.0;
             sigmaTLP[i] = 0.0;
 
-            for (int j = 0; j < 2; j++) {
+            for (int j = 0; j < 2; j++) { // Loop over j (real and imaginary parts)
                 sigmaT[i]  = sigmaT[i] + Math.pow(H1[i][j], 2) + Math.pow(H2[i][j], 2)
                                        + Math.pow(H3[i][j], 2) + Math.pow(H4[i][j], 2);
 
@@ -1681,7 +1700,6 @@ public class JanrRun extends Constants {
 
                 sigmaTL[i] = sigmaTL[i] + H5[i][j] * (H1[i][j] - H4[i][j])
                                         + H6[i][j] * (H2[i][j] + H3[i][j]);
-//                if(Math.phi) System.out.println(i+" "+j+" "+(float)H1[i][j]+" "+(float)H2[i][j]+" "+(float)H3[i][j]+" "+(float)H4[i][j]+" "+(float)H5[i][j]+" "+(float)H6[i][j]);
             }
 //            if(fw>=1.11&&fw<=1.12) System.out.println(Math.toDegrees(phi)+" "+Math.sqrt(s));
 
@@ -1694,11 +1712,11 @@ public class JanrRun extends Constants {
                 + H5[i][1] * (H1[i][0] - H4[i][0]) - H5[i][0] * (H1[i][1] - H4[i][1])
                 + H6[i][1] * (H2[i][0] + H3[i][0]) - H6[i][0] * (H2[i][1] + H3[i][1]);
 
-            sigmaT[i]   = sigmaT[i]   * qkratio / 2.0;
+            sigmaT[i]   = sigmaT[i]   * qkratio / 2.;
             sigmaL[i]   = sigmaL[i]   * qkratio;
             sigmaTT[i]  = sigmaTT[i]  * qkratio;
-            sigmaTL[i]  = sigmaTL[i]  * qkratio / Math.sqrt(2.0);
-            sigmaTLP[i] = sigmaTLP[i] * qkratio / Math.sqrt(2.0);
+            sigmaTL[i]  = sigmaTL[i]  * qkratio / Math.sqrt(2.);
+            sigmaTLP[i] = sigmaTLP[i] * qkratio / Math.sqrt(2.);
 
             sigma_tt  = vtt  * sigmaTT[i]  * Math.cos(2 * phi);
             sigma_ltp = vltp * sigmaTLP[i] * Math.sin(phi);
@@ -1709,14 +1727,11 @@ public class JanrRun extends Constants {
                      + sigma_tt
                      + sigma_lt;
 
-            if (q2 > 0) {
-                robs[0][i] = sigma[i];
-            }
-            if (q2 == 0) {
-                robs[0][i] = sigmaT[i];
-            }
+            if (q2 > 0)  robs[0][i] = sigma[i];
+            if (q2 == 0) robs[0][i] = sigmaT[i];
+
             robs[1][i] = sigma_ltp / sigma[i];
-            robs[2][i] = sigma_lt / sigma[i];
+            robs[2][i] = sigma_lt  / sigma[i];
             robs[3][i] = -sigmaTT[i] / sigmaT[i];
             robs[4][i] = sigmaT[i];
             robs[5][i] = sigmaT[i] + vl * sigmaL[i];
