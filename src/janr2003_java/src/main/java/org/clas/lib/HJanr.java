@@ -7,47 +7,63 @@ import java.util.Arrays;
 
 public class HJanr extends JanrMonitor {
 	
-	Janr03 j = new Janr03();
-	
-//	int[] c={9,4,7,8}, f={3,2,3,3}, w={6,19,9,11}; //fortran
-	int[] c={8,3,6,7}, f={2,1,2,2}, w={5,18,8,10}; //java
+	int[] c={8,3,6,7}, f={2,1,2,2}, w={5,18,8,10}; //default bins in coscm,phicm,w
 
     public HJanr(String name) {
         super(name);
         setRunNumber(0);
         dgmActive = true;
-        setJanrTabNames("DATA");
+        setJanrTabNames(0,"DATA");
+        setJanrTabNames(1,"FITC");
         useWCFButtons(true);
         use1234Buttons(true);
         useBinSliderPane(true);
-        init(); 
+        init();
         hjanr_init();
         createHistos(getRunNumber());
+        hjanr_loadpar(3);
         plotHistos(getRunNumber(),0,0);
     }
     
     public void hjanr_init() { 	
     	int i=0;
-     	for (String name : j.fname) hjanr_input(i++,j.janrPath+name); //loop over observables
+    	hjanr_loadpar(1);
+     	for (String name : j.fname) hjanr_input(i++,j.janrPath+name); //loop over reactions
     }
     
     @Override 
     public void createHistos(int run) {
     	histosExist = true; 
     	createDATA();
+    	createFITC();
     }
     
     public void createDATA() {
-    	dgm.add("DATA", j.nplt,3,0,0,0);
-    	for (int i=0; i<j.nplt; i++) {dgm.makeGE("WDAT"+i, 0, j.lab[i], "", i==0?    "W":"", 1,5);
-    	                              dgm.makeGE("WSEL"+i,-2, "",       "", i==0?     "":"", 3,4,1,3);
-                                      dgm.makeGE("WFIT"+i,-2, "",       "", i==0?    "W":"", 1,1,1,1);}
-     	for (int i=0; i<j.nplt; i++) {dgm.makeGE("CDAT"+i, 0, "",       "", i==0?"COSCM":"", 1,5);
-                                      dgm.makeGE("CSEL"+i,-2, "",       "", i==0?     "":"", 3,4,1,3);
-    	                              dgm.makeGE("CFIT"+i,-2, "",       "", i==0?"COSCM":"", 1,1,1,1);}
-   	    for (int i=0; i<j.nplt; i++) {dgm.makeGE("FDAT"+i, 0, "",       "", i==0?"PHICM":"", 1,5);
-                                      dgm.makeGE("FSEL"+i,-2, "",       "", i==0?     "":"", 3,4,1,3);
-    	                              dgm.makeGE("FFIT"+i,-2, "",       "", i==0?"PHICM":"", 1,1,1,1);}
+    	dgm[0].add("DATA", j.nplt,3,0,0,0); 
+    	for (int i=0; i<j.nplt; i++) {dgm[0].makeGE("WDAT" +i, 0, j.lab[i],"", i==0?    "W":"", 1,5);
+    	                              dgm[0].makeGE("WSEL" +i,-2, "",      "", i==0?     "":"", 3,4,1,3);
+                                      dgm[0].makeGE("WFIT1"+i,-2, "",      "", i==0?    "W":"", 1,1,1,1);
+                                      dgm[0].makeGE("WFIT2"+i,-2, "",      "", i==0?    "W":"", 2,1,1,2);}
+     	for (int i=0; i<j.nplt; i++) {dgm[0].makeGE("CDAT" +i, 0, "",      "", i==0?"COSCM":"", 1,5);
+                                      dgm[0].makeGE("CSEL" +i,-2, "",      "", i==0?     "":"", 3,4,1,3);
+    	                              dgm[0].makeGE("CFIT1"+i,-2, "",      "", i==0?"COSCM":"", 1,1,1,1);
+                                      dgm[0].makeGE("CFIT2"+i,-2, "",      "", i==0?"COSCM":"", 2,1,1,2);}
+        for (int i=0; i<j.nplt; i++) {dgm[0].makeGE("FDAT" +i, 0, "",      "", i==0?"PHICM":"", 1,5);
+                                      dgm[0].makeGE("FSEL" +i,-2, "",      "", i==0?     "":"", 3,4,1,3);
+       	                              dgm[0].makeGE("FFIT1"+i,-2, "",      "", i==0?"PHICM":"", 1,1,1,1);
+       	                              dgm[0].makeGE("FFIT2"+i,-2, "",      "", i==0?"PHICM":"", 2,1,1,2);
+    	                              }
+    }
+    
+    public void createFITC() {
+    	dgm[1].add("FITC", 1, 1, 0, 0, 0);   	
+    	String titx = j.pname[0]+"="+String.format("%.2f",j.start_value[0])+" ";
+    	for (int i=1; i<30; i++) titx+=" "+j.pname[i]+"="+String.format("%.2f",j.start_value[i])+"    ";
+       	dgm[1].makeGE("COF1", -1, 0, 31, " ", titx," ",1,5);
+    	dgm[1].cc("COF1", false, false, 0.5f, 30.5f, -4f, 4f, 0f, 0f);
+       	dgm[1].makeGE("SEL1", -2, 0, 31, "", titx," ",2,4,1,3);   
+    	dgm[1].cc("SEL1", false, false, 0.5f, 30.5f, -4f, 4f, 0f, 0f);
+
     }
 
     public void hjanr_input(int iF, String file) {
@@ -97,8 +113,6 @@ public class HJanr extends JanrMonitor {
             e.printStackTrace();
         }
 
-//        System.out.println("nphi,ncos,nw=" + j.ndims[iF][0] + "," + j.ndims[iF][1] + "," + j.ndims[iF][2]);
-
         int lab2Index = (int) j.xx[iF][6][0] - 1;
         int lab1Index = (int) j.xx[iF][5][0] - 1;
         String lab2Str = (lab2Index >= 0 && lab2Index < lab2.length) ? lab2[lab2Index] : "";
@@ -111,30 +125,38 @@ public class HJanr extends JanrMonitor {
     @Override       
     public void plotHistos(int run, int nt, int bin) {
     	if(!histosExist) return;
-    	if(nt>=0) hjanr_pick(nt, bin);
+    	if(nt>=0) hjanr_bin_pick(nt, bin);
     	hjanr_plot();
-    	dgm.drawGroup("DATA",0,0,0);
+    	dgm[0].drawGroup("DATA",0,0,0);
+    	dgm[1].drawGroup("FITC",0,0,0);
     }
     
-    public void hjanr_pick(int nt, int bin) {
-    	if (nt == 0) {binslider.setValue(w[0]); binslider.setMaximum(j.ndims[0][2]-1); w[0] = bin;} 
-    	if (nt == 4) {binslider.setValue(c[0]); binslider.setMaximum(j.ndims[0][1]-1); c[0] = bin;}
-    	if (nt == 8) {binslider.setValue(f[0]); binslider.setMaximum(j.ndims[0][0]-1); f[0] = bin;} 
-    	if (nt == 1) {binslider.setValue(w[1]); binslider.setMaximum(j.ndims[1][2]-1); w[1] = bin;} 
-    	if (nt == 5) {binslider.setValue(c[1]); binslider.setMaximum(j.ndims[1][1]-1); c[1] = bin;}
-    	if (nt == 9) {binslider.setValue(f[1]); binslider.setMaximum(j.ndims[1][0]-1); f[1] = bin;}
-    	if (nt == 2) {binslider.setValue(w[2]); binslider.setMaximum(j.ndims[2][2]-1); w[2] = bin;}
-    	if (nt == 6) {binslider.setValue(c[2]); binslider.setMaximum(j.ndims[2][1]-1); c[2] = bin;}
-    	if (nt ==10) {binslider.setValue(f[2]); binslider.setMaximum(j.ndims[2][0]-1); f[2] = bin;}
-    	if (nt == 3) {binslider.setValue(w[3]); binslider.setMaximum(j.ndims[3][2]-1); w[3] = bin;}
-    	if (nt == 7) {binslider.setValue(c[3]); binslider.setMaximum(j.ndims[3][1]-1); c[3] = bin;}
-    	if (nt ==11) {binslider.setValue(f[3]); binslider.setMaximum(j.ndims[3][0]-1); f[3] = bin;}
+    public void hjanr_pick() {
+    	
     }
     
-    public void hjanr_plot() {   	
+    public void hjanr_bin_pick(int nt, int bin) { //Pick new kinematic points
+    	switch (nt) {
+    	case 0: binslider.setMaximum(j.ndims[0][2]-1); w[0] = bin; break; 
+    	case 4: binslider.setMaximum(j.ndims[0][1]-1); c[0] = bin; break;
+    	case 8: binslider.setMaximum(j.ndims[0][0]-1); f[0] = bin; break; 
+    	case 1: binslider.setMaximum(j.ndims[1][2]-1); w[1] = bin; break; 
+    	case 5: binslider.setMaximum(j.ndims[1][1]-1); c[1] = bin; break;
+    	case 9: binslider.setMaximum(j.ndims[1][0]-1); f[1] = bin; break;
+    	case 2: binslider.setMaximum(j.ndims[2][2]-1); w[2] = bin; break;
+    	case 6: binslider.setMaximum(j.ndims[2][1]-1); c[2] = bin; break;
+    	case 10:binslider.setMaximum(j.ndims[2][0]-1); f[2] = bin; break;
+    	case 3: binslider.setMaximum(j.ndims[3][2]-1); w[3] = bin; break;
+    	case 7: binslider.setMaximum(j.ndims[3][1]-1); c[3] = bin; break;
+    	case 11:binslider.setMaximum(j.ndims[3][0]-1); f[3] = bin;
+    	}
+    }
+ 
+    public void hjanr_plot() { 
     	for (int i=0; i<j.nplt; i++ ) hjanr_plot_fit(i,f[i],f[i],c[i],c[i],0,j.ndims[i][2],w[i]); //w
     	for (int i=0; i<j.nplt; i++ ) hjanr_plot_fit(i,f[i],f[i],0,j.ndims[i][1],w[i],w[i],c[i]); //coscm
-    	for (int i=0; i<j.nplt; i++ ) hjanr_plot_fit(i,0,j.ndims[i][0],c[i],c[i],w[i],w[i],f[i]); //phicm	
+    	for (int i=0; i<j.nplt; i++ ) hjanr_plot_fit(i,0,j.ndims[i][0],c[i],c[i],w[i],w[i],f[i]); //phicm
+    	hjanr_plot_par(); txt1out(); txt2out();
     }
     
     public void hjanr_plot_fit(int ifi, int f1, int f2, int c1, int c2, int w1, int w2, int itg) {
@@ -164,6 +186,7 @@ public class HJanr extends JanrMonitor {
     			int icc = ic*j.ndims[ifi][0];
     			for (int iff=f1; iff<f2+1; iff++) {
     				 indx = iww+icc+iff;
+    				 
     				 if(j.xx[ifi][iplt][indx] < xmx) break;    				 
     				 j.xplt[k] = (float) j.xx[ifi][iplt][indx];
     				 dumd[k] =  j.crs[ifi][indx];
@@ -228,21 +251,29 @@ public class HJanr extends JanrMonitor {
     	hjanr_reset(iplt, ifi); 
     	
     	switch (iplt) {
-    	case 2: for (int i=0; i<k; i++) dgm.getGE("WDAT"+ifi).addPoint(j.xplt[i], dumd[i], 0., dume[i]);
-    	        for (int i=0; i<k; i++) dgm.getGE("WFIT"+ifi).addPoint(j.xplt[i],  obs[i], 0.,      0.);
-    	                                dgm.getGE("WSEL"+ifi).addPoint(j.xplt[itg], dumd[itg], 0., dume[itg]);
+    	case 2: for (int i=0; i<k; i++) dgm[0].getGE("WDAT"+ ifi).addPoint(j.xplt[i], dumd[i], 0., dume[i]);
+                for (int i=0; i<k; i++) dgm[0].getGE("WFIT1"+ifi).addPoint(j.xplt[i],  obs[i], 0.,      0.);
+                for (int i=0; i<k; i++) dgm[0].getGE("WFIT2"+ifi).addPoint(j.xplt[i],  obs1[i], 0.,      0.);
+    	                                dgm[0].getGE("WSEL" +ifi).addPoint(j.xplt[itg], dumd[itg], 0., dume[itg]);
     	break;
-    	case 1: for (int i=0; i<k; i++) dgm.getGE("CDAT"+ifi).addPoint(j.xplt[i], dumd[i], 0., dume[i]);
-                for (int i=0; i<k; i++) dgm.getGE("CFIT"+ifi).addPoint(j.xplt[i],  obs[i], 0.,      0.);
-                                        dgm.getGE("CSEL"+ifi).addPoint(j.xplt[itg], dumd[itg], 0., dume[itg]);
-
+    	case 1: for (int i=0; i<k; i++) dgm[0].getGE("CDAT" +ifi).addPoint(j.xplt[i], dumd[i], 0., dume[i]);
+                for (int i=0; i<k; i++) dgm[0].getGE("CFIT1"+ifi).addPoint(j.xplt[i],  obs[i], 0.,      0.);
+                for (int i=0; i<k; i++) dgm[0].getGE("CFIT2"+ifi).addPoint(j.xplt[i],  obs1[i], 0.,      0.);
+                                        dgm[0].getGE("CSEL" +ifi).addPoint(j.xplt[itg], dumd[itg], 0., dume[itg]);
     	break;
-    	case 0: for (int i=0; i<k; i++) dgm.getGE("FDAT"+ifi).addPoint(j.xplt[i], dumd[i], 0., dume[i]);
-                for (int i=0; i<k; i++) dgm.getGE("FFIT"+ifi).addPoint(j.xplt[i],  obs[i], 0.,      0.);
-                                        dgm.getGE("FSEL"+ifi).addPoint(j.xplt[itg], dumd[itg], 0., dume[itg]);
-
+    	case 0: for (int i=0; i<k; i++) dgm[0].getGE("FDAT" +ifi).addPoint(j.xplt[i], dumd[i], 0., dume[i]);
+                for (int i=0; i<k; i++) dgm[0].getGE("FFIT1"+ifi).addPoint(j.xplt[i],  obs[i], 0.,      0.);
+                for (int i=0; i<k; i++) dgm[0].getGE("FFIT2"+ifi).addPoint(j.xplt[i],  obs1[i], 0.,      0.);
+                                        dgm[0].getGE("FSEL" +ifi).addPoint(j.xplt[itg], dumd[itg], 0., dume[itg]);
     	}
-
+    }
+    
+    public void hjanr_plot_par() {  
+    	for (int i=0; i<30; i++) dgm[1].getGE("COF1").addPoint(1+i, j.xnew[i], 0, 0);   	
+    	String titx = j.pname[0]+"="+String.format("%.2f",j.xnew[0])+" ";
+    	for (int i=1; i<30; i++) titx+=" "+j.pname[i]+"="+String.format("%.2f",j.xnew[i])+"    ";
+    	dgm[1].getGE("COF1").setTitleX(titx); 
+        dgm[1].getGE("SEL1").addPoint(1+cof, j.xnew[cof], 0, 0);    	
     }
     
     public void hjanr_debug(boolean test) {
@@ -301,47 +332,41 @@ public class HJanr extends JanrMonitor {
              (float)j.BreitS3[jj][1]+" "+(float)j.BreitS3[jj][11]+" "+(float)j.BreitE3[jj][1]+" "+(float)j.BreitE3[jj][11]+" "+
         	 (float)j.BreitS3[jj][4]+" "+(float)j.BreitS3[jj][8] +" "+(float)j.BreitE3[jj][4]+" "+(float)j.BreitE3[jj][8]);        	 
         	 }
-         }
-
-   	
+         }  	
     }
     
     public void hjanr_reset(int iplt, int ifi) {
     	switch (iplt) {
-    	case 2: dgm.getGE("WDAT"+ifi).reset();
-    	        dgm.getGE("WFIT"+ifi).reset();
-    	        dgm.getGE("WSEL"+ifi).reset();
+    	case 2: dgm[0].getGE("WDAT" +ifi).reset();
+                dgm[0].getGE("WFIT1"+ifi).reset();
+                dgm[0].getGE("WFIT2"+ifi).reset();
+    	        dgm[0].getGE("WSEL" +ifi).reset();
     	break;
-    	case 1: dgm.getGE("CDAT"+ifi).reset();
-                dgm.getGE("CFIT"+ifi).reset();
-                dgm.getGE("CSEL"+ifi).reset();
+    	case 1: dgm[0].getGE("CDAT" +ifi).reset();
+                dgm[0].getGE("CFIT1"+ifi).reset();
+                dgm[0].getGE("CFIT2"+ifi).reset();
+                dgm[0].getGE("CSEL" +ifi).reset();
     	break;
-    	case 0: dgm.getGE("FDAT"+ifi).reset();
-                dgm.getGE("FFIT"+ifi).reset();
-                dgm.getGE("FSEL"+ifi).reset();
+    	case 0: dgm[0].getGE("FDAT" +ifi).reset();
+                dgm[0].getGE("FFIT1"+ifi).reset();
+                dgm[0].getGE("FFIT2"+ifi).reset();
+                dgm[0].getGE("FSEL" +ifi).reset();
     	}
+                dgm[1].getGE("COF1").reset();
+                dgm[1].getGE("SEL1").reset();
+    	        
     }
     
+    @Override
     public void hjanr_loadpar(int n) {
     	
         double[] xload = new double[36]; 
         
-        if (n == 1) {
-            for (int i = 0; i <= 35; i++) {
-                xload[i] = j.start_value[i];
-            }
-        } else if (n == 2) {
-            for (int i = 0; i <= 35; i++) {
-                xload[i] = j.xnew[i];
-            }
-        } else if (n == 3) {
-            for (int i = 0; i <= 35; i++) {
-                j.xnew[i] = j.start_value[i];
-            }
-        } else if (n == 4) {
-            for (int i = 0; i <= 35; i++) {
-                j.start_value[i] = j.xnew[i];
-            }
+        switch (n) {
+        case 1: for (int i = 0; i <= 35; i++)  xload[i] = j.start_value[i]; break;
+        case 2: for (int i = 0; i <= 35; i++)  xload[i] = j.xnew[i];        break;
+        case 3: for (int i = 0; i <= 35; i++) j.xnew[i] = j.start_value[i]; break;
+        case 4: for (int i = 0; i <= 35; i++) j.start_value[i] = j.xnew[i];
         }
 
         j.cm1  = xload[0];
@@ -380,6 +405,14 @@ public class HJanr extends JanrMonitor {
         j.ce3 = xload[33];
         j.cs3 = xload[34];
         j.cspa = xload[35];
+    }
+    
+    public void txt1out() {
+    	
+    }
+    
+    public void txt2out() {
+    	
     }
 
     public static void main(String[] args) { 
