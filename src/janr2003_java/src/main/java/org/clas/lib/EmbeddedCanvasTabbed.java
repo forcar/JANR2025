@@ -8,6 +8,8 @@ import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,13 +25,15 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.jlab.groot.graphics.EmbeddedCanvas;
+//import org.jlab.groot.graphics.EmbeddedCanvas;
 import org.jlab.groot.tree.Tree;
 
 /**
  *
  * @author gavalian
  */
+
+@SuppressWarnings("serial")
 public class EmbeddedCanvasTabbed extends JPanel implements ActionListener, ChangeListener {
     
     private JTabbedPane   tabbedPane = null; 
@@ -99,7 +103,7 @@ public class EmbeddedCanvasTabbed extends JPanel implements ActionListener, Chan
     public void stateChanged(ChangeEvent e) {
      
     }
-    
+
     public void addChangeListener() {
         this.tabbedPane.addChangeListener(new ChangeListener() {   
         	public void stateChanged(ChangeEvent e) {        	
@@ -191,7 +195,7 @@ public class EmbeddedCanvasTabbed extends JPanel implements ActionListener, Chan
         this.tabbedCanvases.put(name, canvas);
         tabbedPane.addTab(name, canvas);
         tabbedPane.setSelectedComponent(canvas);
-    }
+    }    
     
     @Override
     public void actionPerformed(ActionEvent e) {
