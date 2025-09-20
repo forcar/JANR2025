@@ -72,6 +72,7 @@ public class GAMMF {
     public static void main(String[] args) {
         // Example usage
         System.out.println("Gamma(0.5) = " + gammaf(0.5));
-        System.out.println("Gamma(5) = " + gammaf(5.0));
+        System.out.println("Gamma(1.0) = " + gammaf(1.0));
+        System.out.println("Gamma(5) = "   + gammaf(5.0));
     }
 }
