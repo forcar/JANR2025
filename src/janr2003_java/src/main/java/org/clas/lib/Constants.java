@@ -1,5 +1,8 @@
 package org.clas.lib;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Constants {
 	
 	    public static Boolean debug=false;
@@ -14,6 +17,7 @@ public class Constants {
         public static final int MAX_PHI_INDEX = 6;
         public static final int MAX_IS_INDEX = 3;
         public static final int MAX_J_INDEX = 2;
+
         
  // MULTIPOL        
         public static final String[] fnamr = {
@@ -132,13 +136,14 @@ public class Constants {
 	    public static final int MAXpar = 99;
 	    public static final int f_out = 49;
 	    
-	    public static String[]      pname = new String[MAXpar];
+	    public static String[]       pname = new String[MAXpar];
 	    public static double[] start_value = new double[MAXpar];
 	    public static double[]   step_size = new double[MAXpar];
 	    public static double[]     low_lim = new double[MAXpar];
 	    public static double[]      up_lim = new double[MAXpar];
-	    public static int[]      par_stat = new int[MAXpar];
-	    public static int[]         plist = new int[MAXpar];
+	    public static int[]       par_stat = new int[MAXpar];
+	    public static int[]          plist = new int[MAXpar];
+	    public static String[]    res_name = new String[MAXpar];
 	    
 	    public static int pi_type;
 	    public static int pi_type2fit;
@@ -220,10 +225,31 @@ public class Constants {
 	    public static int[][] ibad = new int[2][100];
 	    public static int nbad;
 	    public static int datform;	    
-	    public static String[] fname = new String[4];
+	    public static List<String> fname = new ArrayList<>();
 	    public static String parofile;
 	    public static int[] point_stat = new int[MAXpoints];
-
+// HJANR_HCRS
+	    public static int MAX_K=8200, MAX_I=3, MAX_OBS=4, MAX_J=7;
+	    public static int nplt;
+	    public static int[][]   ndims = new    int[MAX_OBS][MAX_I];  
+	    public static double[][][] xx = new double[MAX_OBS][MAX_J][MAX_K]; 
+	    public static double[][]  crs = new double[MAX_OBS][MAX_K];
+	    public static double[][] crse = new double[MAX_OBS][MAX_K];
+	    public static String[]    lab = new String[4];
+	    
+// HJANR_HLIM
+	    private static int[] c = new int[4];
+	    private static int[] w = new int[4];
+	    private static int[] f = new int[4];
+	    
+// HJANR_HPLT	    
+	    public static double[]    xplt = new double[100];
+	    public static double[][] xpltt = new double[100][30];
+	    public static int nt1;
+	    
+//HJANR_VAL	    
+	    public static double[] xnew = new double[36];
+	    
 // JANR_TAB
 	    public static int maxevents;
 	    public static int maxiter;
