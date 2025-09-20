@@ -21,7 +21,7 @@ public class JanrIniPoint extends Constants {
             sa1[i] = 0.0;
         }
 
-        double dip = 1.0 / pow(1.0 + q2 / 0.71, 2);
+        double dip = 1.0/pow(1.0+q2/0.71, 2);
 
         // P11(1440)
         aa3[21] = 0.0;
@@ -95,10 +95,23 @@ public class JanrIniPoint extends Constants {
     }
 
     public void janrIniRes(double q2) {
+    	
+    	// For I=3/2 AM3 = M(3/2)
+    	// For I=1/2 AM1(1,i) =  M(1/2)/3. + M(0)
+    	// For I=1/2 AM1(2,i) = -M(1/2)/3. + M(0)
+    	// cMi,cEi,cSi are fitting parameters for multipoles with I=3/2
+    	// cMPi,cEPi,cSPi are fitting parameters for multipoles pA(1/2)
 
         double[] cc = {-0.57735, 0.0, 1.2247}; //Clebsch-Gordon
         double[] mes = new double[3];
         double a12, a32, s12, gm;
+
+        // P33(1232) M1+ E1+ (Tiator parametrization for G_M)
+        gm = exp(-0.21 * q2) / (pow((1.0 + q2 / 0.71), 2.0) / 3.0);
+        resM = cm1 * gm * (sqrt(pow((2.3933 + q2) / 2.46, 2.0) - 0.88) * 6.568 * 1.013);
+        am3[0] = resM;
+        ae3[0] = -ce1 * am3[0] * 0.025;
+        as3[0] = -cs1 * am3[0] * 0.05;
 
         // P11(1440) M1-
         a32 = 0.0;
@@ -208,13 +221,6 @@ public class JanrIniPoint extends Constants {
                 ae3[3] = mes[1];
                 as3[3] = mes[2];
 
-        // P33(1232) M1+ E1+ (Tiator parametrization for G_M)
-        gm = exp(-0.21 * q2) / (pow((1.0 + q2 / 0.71), 2.0) / 3.0);
-        resM = cm1 * gm * (sqrt(pow((2.3933 + q2) / 2.46, 2.0) - 0.88) * 6.568 * 1.013);
-        am3[0] = resM;
-        ae3[0] = -ce1 * am3[0] * 0.025;
-        as3[0] = -cs1 * am3[0] * 0.05;
-
         // F35(1905) M3- E3-
         a32 = cc[ires[6]-1] * aa3[6] * cep10;
         a12 = cc[ires[6]-1] * aa1[6] * cmp10;
@@ -256,7 +262,7 @@ public class JanrIniPoint extends Constants {
     }
 
     // Tiator nucl-th/0610113
-    // mptoa: Fortran passes by reference; Java returns via array
+    // Fortran subroutines passes by reference; Java methods return via array
     public void mptoa(double l, double m, double e, double s, double[] out) {
         // out[0] = a12, out[1] = a32, out[2] = s12
         out[0] = -0.5 * ((l + 2) * e + l * m);
@@ -271,7 +277,6 @@ public class JanrIniPoint extends Constants {
         out[2] = -(l + 1) * s / sqrt(2.0);
     }
     
-
     public void atomp(double l, double a12, double a32, double s12, double[] mes) {
         double aa32;
         if (l > 0) {
