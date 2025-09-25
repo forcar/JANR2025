@@ -27,13 +27,10 @@ public class JanrViewer implements IDataEventListener, DetectorListener, ActionL
 
     JFrame frame = new JFrame("JANR2003");
 
-	JPanel                      mainPanel = null;
-	JMenuBar                      menuBar = null; 
-    JTabbedPane                tabbedpane = null;    
-    JFileChooser                       fc = null; 	
-	JanrMonitor[]                monitors = null;
-	
-//  DataSourceProcessorPane processorPane = null;
+	JPanel                   mainPanel = new JPanel();	
+	JMenuBar                   menuBar = new JMenuBar();     
+    JFileChooser                    fc = null; 	
+	JanrMonitor[]             monitors = null;
 
 	java.util.Timer       processTimer = null;
     int                     eventDelay = 0;
@@ -57,8 +54,8 @@ public class JanrViewer implements IDataEventListener, DetectorListener, ActionL
     	createMenuBar();
     	createPanels();  
 	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    frame.setJMenuBar(menuBar);
-	    frame.add(mainPanel);
+	    frame.setJMenuBar(getMenuBar());
+	    frame.add(getMainPanel());
 	    frame.setSize(1900, 800);
 	    frame.setVisible(true);
         System.out.println("JanrViewer init complete \n");
@@ -78,57 +75,34 @@ public class JanrViewer implements IDataEventListener, DetectorListener, ActionL
     } 
     
     public void createMenuBar() {
-    	System.out.println("JanrViewer.createMenuBar");        		
-        menuBar = new JMenuBar();         
-        JMenu menu;
-        JMenuItem menuItem;
-        menu     = new JMenu("File");
-        menuItem = new JMenuItem("Fit Data"); menuItem.addActionListener(this); menu.add(menuItem);
-        menuBar.add(menu);
+    	System.out.println("JanrViewer.createMenuBar");        		         
+        JMenu menu = new JMenu("File");
+        JMenuItem menuItem = new JMenuItem("Fit Data"); menuItem.addActionListener(this); menu.add(menuItem);
+        getMenuBar().add(menu);
+    }
+    
+    public JMenuBar getMenuBar() {
+    	return menuBar;
+    }
+    
+    public JPanel getMainPanel() {
+    	return mainPanel;
     }
     
     public void createPanels() {
     	System.out.println("JanrViewer.createPanels()");
-
-        mainPanel = new JPanel();	
-        mainPanel.setLayout(new BorderLayout());
-        
-      	tabbedpane = new JTabbedPane(); 
-        mainPanel.add(tabbedpane);
-      	
-//        processorPane = new DataSourceProcessorPane();
-//        processorPane.setUpdateRate(analysisUpdateEvnt);
-//        processorPane.addEventListener(this);
-//        mainPanel.add(processorPane,BorderLayout.PAGE_END);
+    	
+      	JTabbedPane tabbedpane = new JTabbedPane(); tabbedpane.addChangeListener(this);	               
+        getMainPanel().setLayout(new BorderLayout()); getMainPanel().add(tabbedpane);
        
         GStyle.getAxisAttributesX().setTitleFontSize(18);
         GStyle.getAxisAttributesX().setLabelFontSize(14);
         GStyle.getAxisAttributesY().setTitleFontSize(18);
         GStyle.getAxisAttributesY().setLabelFontSize(14);
 
-        for(int k=0; k<this.monitors.length; k++) {
-                this.tabbedpane.add(this.monitors[k].getDetectorPanel(), this.monitors[k].getDetectorName());
-//        	    this.monitors[k].getDetectorView().getView().addDetectorListener(this);                        
-        }
-/*        
-        this.tabbedpane.addChangeListener(new ChangeListener() {   
-        	public void stateChanged(ChangeEvent e) {
-        	System.out.println("Change Event");
-        	if (e.getSource() instanceof JTabbedPane) {
-        		JTabbedPane pane = (JTabbedPane) e.getSource();
-        		selectedTabIndex = pane.getSelectedIndex();
-        		selectedTabName  = (String) pane.getTitleAt(selectedTabIndex);
-        		System.out.println(selectedTabIndex + " " + selectedTabName);
-        	}
-        	}
-        });
-*/ 
-        
-        tabbedpane.addChangeListener(this);	               
-//        this.dataProcessor.addEventListener(this);
-        
-        setCanvasUpdate(canvasUpdateTime);
-        
+        for(int k=0; k<this.monitors.length; k++) tabbedpane.add(this.monitors[k].getDetectorPanel(), this.monitors[k].getDetectorName());                     
+     
+        setCanvasUpdate(canvasUpdateTime);       
     }
         
     public void setCanvasUpdate(int time) {
