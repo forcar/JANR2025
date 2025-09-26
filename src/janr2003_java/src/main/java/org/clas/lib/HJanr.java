@@ -56,11 +56,11 @@ public class HJanr extends JanrMonitor {
     }
     
     public void createFITC() {
-    	dgm[1].add("FITC", 1, 1, 0, 0, 0);   	
+    	dgm[1].add("FITC", 1,1,0,0,0);   	
     	String titx = j.pname[0]+"="+String.format("%.2f",j.start_value[0])+" ";
     	for (int i=1; i<30; i++) titx+=" "+j.pname[i]+"="+String.format("%.2f",j.start_value[i])+"    ";
        	dgm[1].makeGE("COF1", -1, 0, 31, "", titx," ",1,5);     dgm[1].cc("COF1", false, false, 0.5f, 30.5f, -4f, 4f, 0f, 0f);
-       	dgm[1].makeGE("SEL1", -2, 0, 31, "", titx," ",2,4,1,3); dgm[1].cc("SEL1", false, false, 0.5f, 30.5f, -4f, 4f, 0f, 0f);
+       	dgm[1].makeGE("SEL1", -2, 0, 31, "", titx," ",2,4,1); 
     }
 
     public void hjanr_input(int iF, String file) {
@@ -249,49 +249,50 @@ public class HJanr extends JanrMonitor {
     	hjanr_reset_data(iplt, ifi); 
     	
     	switch (iplt) {
-    	case 2: for (int i=0; i<k; i++) dgm[0].getGE("WDAT"+ ifi).addPoint(j.xplt[i], dumd[i], 0., dume[i]);
-                for (int i=0; i<k; i++) dgm[0].getGE("WFIT1"+ifi).addPoint(j.xplt[i],  obs[i], 0.,      0.);
-                for (int i=0; i<k; i++) dgm[0].getGE("WFIT2"+ifi).addPoint(j.xplt[i],  obs1[i],0.,      0.);
-    	                                dgm[0].getGE("WSEL" +ifi).addPoint(j.xplt[itg], dumd[itg], 0., dume[itg]);
+    	case 2: for (int i=0; i<k; i++) dgm[0].getGE("WDAT"+ ifi).addPoint(j.xplt[i],   dumd[i],  0., dume[i]);
+                                        dgm[0].getGE("WSEL" +ifi).addPoint(j.xplt[itg], dumd[itg],0., dume[itg]);
+                for (int i=0; i<k; i++) dgm[0].getGE("WFIT1"+ifi).addPoint(j.xplt[i],    obs[i],  0., 0.);
+                for (int i=0; i<k; i++) dgm[0].getGE("WFIT2"+ifi).addPoint(j.xplt[i],   obs1[i],  0., 0.);
     	break;
-    	case 1: for (int i=0; i<k; i++) dgm[0].getGE("CDAT" +ifi).addPoint(j.xplt[i], dumd[i], 0., dume[i]);
-                for (int i=0; i<k; i++) dgm[0].getGE("CFIT1"+ifi).addPoint(j.xplt[i],  obs[i], 0.,      0.);
-                for (int i=0; i<k; i++) dgm[0].getGE("CFIT2"+ifi).addPoint(j.xplt[i],  obs1[i],0.,      0.);
-                                        dgm[0].getGE("CSEL" +ifi).addPoint(j.xplt[itg], dumd[itg], 0., dume[itg]);
+    	case 1: for (int i=0; i<k; i++) dgm[0].getGE("CDAT" +ifi).addPoint(j.xplt[i],   dumd[i],  0., dume[i]);
+                                        dgm[0].getGE("CSEL" +ifi).addPoint(j.xplt[itg], dumd[itg],0., dume[itg]);
+                for (int i=0; i<k; i++) dgm[0].getGE("CFIT1"+ifi).addPoint(j.xplt[i],    obs[i],  0., 0.);
+                for (int i=0; i<k; i++) dgm[0].getGE("CFIT2"+ifi).addPoint(j.xplt[i],    obs1[i], 0., 0.);
+
     	break;
-    	case 0: for (int i=0; i<k; i++) dgm[0].getGE("FDAT" +ifi).addPoint(j.xplt[i], dumd[i], 0., dume[i]);
-                for (int i=0; i<k; i++) dgm[0].getGE("FFIT1"+ifi).addPoint(j.xplt[i],  obs[i], 0.,      0.);
-                for (int i=0; i<k; i++) dgm[0].getGE("FFIT2"+ifi).addPoint(j.xplt[i],  obs1[i],0.,      0.);
-                                        dgm[0].getGE("FSEL" +ifi).addPoint(j.xplt[itg], dumd[itg], 0., dume[itg]);
+    	case 0: for (int i=0; i<k; i++) dgm[0].getGE("FDAT" +ifi).addPoint(j.xplt[i],   dumd[i],  0., dume[i]);
+                                        dgm[0].getGE("FSEL" +ifi).addPoint(j.xplt[itg], dumd[itg],0., dume[itg]);
+                for (int i=0; i<k; i++) dgm[0].getGE("FFIT1"+ifi).addPoint(j.xplt[i],    obs[i],  0., 0.);
+                for (int i=0; i<k; i++) dgm[0].getGE("FFIT2"+ifi).addPoint(j.xplt[i],    obs1[i], 0., 0.);
     	}
     }
     
     public void hjanr_plot_par() {  
     	hjanr_reset_par();
-    	for (int i=0; i<30; i++) dgm[1].getGE("COF1").addPoint(1+i, j.xnew[i], 0, 0);   	
-    	String titx = j.pname[0]+"="+String.format("%.2f",j.xnew[0])+" ";
+    	String                   titx =    j.pname[0]+"="+String.format("%.2f",j.xnew[0])+" ";
     	for (int i=1; i<30; i++) titx+=" "+j.pname[i]+"="+String.format("%.2f",j.xnew[i])+"    ";
-    	dgm[1].getGE("COF1").setTitleX(titx); 
-        dgm[1].getGE("SEL1").addPoint(1+cof, j.xnew[cof], 0, 0);    	
+    	for (int i=0; i<30; i++) dgm[1].getGE("COF1").addPoint(1+i,   j.start_value[i],0,0);   	
+    	for (int icof : cofList) dgm[1].getGE("SEL1").addPoint(1+icof, j.xnew[icof],     0,0); 
+    	                         dgm[1].getGE("COF1").setTitleX(titx); 
     }
-    
-    
+        
     public void hjanr_reset_data(int iplt, int ifi) {
     	switch (iplt) {
     	case 2: dgm[0].getGE("WDAT" +ifi).reset();
+                dgm[0].getGE("WSEL" +ifi).reset();
                 dgm[0].getGE("WFIT1"+ifi).reset();
                 dgm[0].getGE("WFIT2"+ifi).reset();
-    	        dgm[0].getGE("WSEL" +ifi).reset();
     	break;
     	case 1: dgm[0].getGE("CDAT" +ifi).reset();
+                dgm[0].getGE("CSEL" +ifi).reset();                
                 dgm[0].getGE("CFIT1"+ifi).reset();
                 dgm[0].getGE("CFIT2"+ifi).reset();
-                dgm[0].getGE("CSEL" +ifi).reset();
+
     	break;
     	case 0: dgm[0].getGE("FDAT" +ifi).reset();
+                dgm[0].getGE("FSEL" +ifi).reset();                
                 dgm[0].getGE("FFIT1"+ifi).reset();
                 dgm[0].getGE("FFIT2"+ifi).reset();
-                dgm[0].getGE("FSEL" +ifi).reset();
     	} 	        
     }
     
