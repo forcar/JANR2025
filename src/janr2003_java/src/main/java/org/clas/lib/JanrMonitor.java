@@ -12,6 +12,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -52,17 +54,19 @@ public class JanrMonitor implements ActionListener {
     public  int                             nt  = 0;
     private int                             bin = 0;
     public int                              cof = 0;
+    public Set<Integer>                 cofList = new HashSet<>();
     		
     private JPanel                  actionPanel = null;
     private JPanel               controlsPanel0 = null;
     private JPanel               controlsPanel1 = null;
  
+    private JComboBox                 configCMB = new JComboBox();
 	private GridBagConstraints              gbc = new GridBagConstraints();
 
     public Boolean                  histosExist = false;   
     public String                          root = " ";
     public JSlider                    binslider = null;
-    
+    public JSlider                    cofslider = new JSlider(JSlider.HORIZONTAL,10, 100, 50); 
     private ButtonGroup bG0, bG1;
     private JRadioButton bW,bC,bF,b1,b2,b3,b4;
     private Boolean useWCF=false, use1234=false, useBSP=false;
@@ -230,7 +234,7 @@ public class JanrMonitor implements ActionListener {
         JLabel       label = new JLabel("" + String.format("%d", 0));       
         binslider = new JSlider(JSlider.HORIZONTAL, 0, 30, 10); 
         binslider.setPreferredSize(new Dimension(100,10));
-        sliderPane.add(new JLabel("WCF bin",JLabel.CENTER));
+        sliderPane.add(new JLabel("WCF:",JLabel.CENTER));
         sliderPane.add(binslider);
         sliderPane.add(label);  
         binslider.addChangeListener(new ChangeListener() {
@@ -247,19 +251,21 @@ public class JanrMonitor implements ActionListener {
     public JPanel getComboBox() {
 		JPanel sliderParm = new JPanel();
 		sliderParm.setLayout(new FlowLayout());      
-		sliderParm.add(new JLabel("PARM:"));  		
-		JComboBox configCMB = new JComboBox();
+		sliderParm.add(new JLabel("COEF:"));  				
 		DefaultComboBoxModel model = (DefaultComboBoxModel) configCMB.getModel();
 		for (int i=0; i<j.pname.length; i++) model.addElement(j.pname[i]);
 		configCMB.setModel(model);
 		configCMB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				cof = model.getIndexOf(configCMB.getSelectedItem()); 				
+				cof = model.getIndexOf(configCMB.getSelectedItem()); 
+				cofList.add(cof); 
 				cof_resonance.setText(j.res_name[cof]);
+				cofslider.setValue(((int)j.start_value[cof]+5)*10); //new
 				Res2Amp(j.res_name[cof]);
                 plotHistos(getRunNumber(), nt, bin);
 			}
 		});
+		cofList.add(0);
         configCMB.setSelectedIndex(0);
 		sliderParm.add(configCMB); 
 		
@@ -268,7 +274,6 @@ public class JanrMonitor implements ActionListener {
 
     public JPanel getCofSliderPanel() {
         JPanel sliderPanel = new JPanel(new GridBagLayout());                     
-        JSlider  cofslider = new JSlider(JSlider.HORIZONTAL,10, 100, 50); 
         cofslider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {                                 			
                 j.xnew[cof] = cofslider.getValue()*0.1f-5f;  
@@ -278,7 +283,7 @@ public class JanrMonitor implements ActionListener {
                 plotHistos(getRunNumber(), nt, bin);
             }
         });    
-        cofslider.setValue((int)j.xnew[0]); //default for startup
+        cofslider.setValue(((int)j.start_value[0]+5)*10); //default for startup
         gbc.gridx=0; gbc.gridy=0;
         sliderPanel.add(cofslider,gbc);
         return sliderPanel;
@@ -329,14 +334,6 @@ public class JanrMonitor implements ActionListener {
     public JLabel getCofResonance() {
         return cof_resonance;
     }
-    
-    public void setCofParameters(String[] val) {
-        cof_parameters.setText("<html>"+
-                "<b>MULTIPOLE:</b>&nbsp;AM="+val[0]+"&nbsp;&nbsp;&nbsp;&nbsp;AE="+val[1]+"&nbsp;&nbsp;AS="+val[2]+"<br>" +
-                "<b>ISOSPIN:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A32="+val[3]+"&nbsp;A12="+val[4]+"&nbsp;S12="+val[5]+"<br>" +
-                "</html>"
-            );
-    }
 
     public void Res2Amp(String res) {
     	double am=0, ae=0, as=0, a32=0, a12=0, s12=0, rem=0, rsm=0;
@@ -358,6 +355,14 @@ public class JanrMonitor implements ActionListener {
     	double[] dcof = {am,ae,as,a32,a12,s12}; String[] scof = new String[6];
     	int n=0; for (double d : dcof) scof[n++] = String.valueOf(""+String.format("%.2f", d));
     	setCofParameters(scof);
+    }
+    
+    public void setCofParameters(String[] val) {
+        cof_parameters.setText("<html>"+
+                "<b>MULTIPOLE:</b>&nbsp;AM="+val[0]+"&nbsp;&nbsp;&nbsp;&nbsp;AE="+val[1]+"&nbsp;&nbsp;AS="+val[2]+"<br>" +
+                "<b>ISOSPIN:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A32="+val[3]+"&nbsp;A12="+val[4]+"&nbsp;S12="+val[5]+"<br>" +
+                "</html>"
+            );
     }
     
     public JButton getResetButton() {
@@ -417,8 +422,9 @@ public class JanrMonitor implements ActionListener {
     }
     
     public void ResetAction() {
-    	hjanr_loadpar(3);
-    	hjanr_loadpar(2); 
+    	cofList.clear(); configCMB.setSelectedIndex(0);
+    	cofslider.setValue(((int)j.start_value[0]+5)*10);  
+    	hjanr_loadpar(3); 
     	plotHistos(getRunNumber(),nt,bin); 
     	Res2Amp(j.res_name[cof]);    	
     }
