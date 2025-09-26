@@ -378,8 +378,8 @@ public class DataGroupManager {
         			if(!doAutoRange) c.getPad().getAxisZ().setRange(0.1*zMin, 20*zMax); 
         			if( doAutoRange) c.getPad().getAxisZ().setAutoScale(true);
         		} 
-        		if (ds0 instanceof GraphErrors) {
-        			maxtest = false;
+        		if (ds0 instanceof GraphErrors) {      		
+        			maxtest = false;  
         			c.getPad().setTitleFontSize(24);
         			c.getPad().setAxisTitleFontSize(18);
         			if( doAutoRange) {c.getPad().getAxisX().setAutoScale(true);
@@ -387,8 +387,12 @@ public class DataGroupManager {
                                       c.getPad().getAxisZ().setAutoScale(true);}            			
         		}        		
         	}
-        	for (IDataSet ds : dsList) if(maxtest?ds.getMax()>0.01:true) c.draw(ds,ds.getAttributes().getDrawOptions());
+        	for (IDataSet ds : dsList) if(maxtest ? ds.getMax()>-5:true) c.draw(ds,ds.getAttributes().getDrawOptions());
         }   	
+    }
+    
+    public void print(IDataSet ds0, Boolean val) {
+    	System.out.println(val+" "+ds0.getName()+" "+ds0.getAttributes().getMarkerColor());
     }
 	
 }
