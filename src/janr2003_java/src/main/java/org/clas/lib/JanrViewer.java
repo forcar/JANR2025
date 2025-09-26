@@ -56,7 +56,8 @@ public class JanrViewer implements IDataEventListener, DetectorListener, ActionL
 	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    frame.setJMenuBar(getMenuBar());
 	    frame.add(getMainPanel());
-	    frame.setSize(1900, 800);
+	    frame.pack();
+	    frame.setSize(2300, 1100);
 	    frame.setVisible(true);
         System.out.println("JanrViewer init complete \n");
     }
@@ -101,7 +102,7 @@ public class JanrViewer implements IDataEventListener, DetectorListener, ActionL
         GStyle.getAxisAttributesY().setLabelFontSize(14);
 
         for(int k=0; k<this.monitors.length; k++) tabbedpane.add(this.monitors[k].getDetectorPanel(), this.monitors[k].getDetectorName());                     
-     
+
         setCanvasUpdate(canvasUpdateTime);       
     }
         
