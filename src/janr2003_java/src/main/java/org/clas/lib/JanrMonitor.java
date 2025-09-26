@@ -26,6 +26,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JSplitPane;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -41,6 +43,8 @@ public class JanrMonitor implements ActionListener {
 
     private String                   detectorName = null;
     private JPanel                  detectorPanel = new JPanel();
+    
+    private JSplitPane                      vPane = null;
     
     private EmbeddedCanvasTabbed[] detectorCanvas = new EmbeddedCanvasTabbed[2];
     private ArrayList<String>[]  detectorTabNames = (ArrayList<String>[])new ArrayList[2];
@@ -119,9 +123,9 @@ public class JanrMonitor implements ActionListener {
      }  
     
      public JSplitPane getCanvasPane(EmbeddedCanvasTabbed p1, EmbeddedCanvasTabbed p2) {
-        JSplitPane vPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT); 
-        vPane.setTopComponent(p1);
-        vPane.setBottomComponent(p2);     
+        p1.setPreferredSize(new Dimension(2300,1000)); p2.setPreferredSize(new Dimension(2300,100));
+        vPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,p1,p2);    	  
+        vPane.setDividerLocation(0.8);
         return vPane;
      }
     
@@ -150,6 +154,9 @@ public class JanrMonitor implements ActionListener {
         detectorPanel.add(getPanel(getDetectorCanvas(0),getDetectorCanvas(1)),BorderLayout.CENTER);  //DATA, FITC canvases         
 //        getDetectorPanel().add(getDetectorCanvas,BorderLayout.CENTER);           
         detectorPanel.add(controlsPanel0,     BorderLayout.SOUTH); 
+        
+        vPane.setResizeWeight(0.75);
+
     }
     
     public JPanel packWCFPanel() {
