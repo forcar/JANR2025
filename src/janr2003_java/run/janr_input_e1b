@@ -1,0 +1,25 @@
+F		
+Y			
+1 1 0  		
+15		
+1.645		 
+1.08 1.7 0.01	  
+0.4 0.4 0.5	
+-1.1 1.1 0.2	
+1. 359. 15.	
+0.05		
+junk.dat	
+500                
+0.1                 
+1.0                 
+36		   
+res-q0.4.inp	
+par_e1b.in	
+par_e1b.out	
+2		
+5 66 11		
+200000.			
+crs-eppi0-m98-q1.tab
+crs-eppip-e1c-q2.tab    
+asym-eppi0-piana-q1.tab 
+asym-eppip-janr-q2.tab 
