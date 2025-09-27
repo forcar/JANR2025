@@ -1,4 +1,4 @@
-3#!/bin/csh -f
+#!/bin/csh -f
 #=================================================================
 # BUILDING SCRIPT for COATJAVA PROJECT (first maven build)
 # then the documentatoin is build from the sources and commited
@@ -13,7 +13,7 @@ endif
 # janr2003
 echo "Building janr2003..."
     mvn clean install
-    cp target/janr2003-3.0-jar-with-dependencies.jar lib/
+    cp target/janr2025-0.0.1-SNAPSHOT-jar-with-dependencies.jar lib/
     cd ..
 
 
