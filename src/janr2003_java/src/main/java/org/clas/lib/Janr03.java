@@ -10,7 +10,7 @@ public class Janr03 extends Constants {
     JanrIniPoint  jip = new JanrIniPoint();
     JanrRun        jr = new JanrRun();
 
-    public Janr03() {
+    public Janr03() {  
         janr_init();
     }
         

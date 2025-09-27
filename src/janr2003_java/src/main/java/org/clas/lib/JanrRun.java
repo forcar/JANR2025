@@ -18,7 +18,7 @@ public class JanrRun extends Constants {
     	
     }
 
-    public void janrRun(double wi,
+    public void janrRun(double wi,    
                         double Q2i,
                         double epsilon,
                         double costhi,
