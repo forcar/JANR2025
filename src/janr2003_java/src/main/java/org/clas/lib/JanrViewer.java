@@ -42,7 +42,7 @@ public class JanrViewer implements IDataEventListener, DetectorListener, ActionL
     String workDir = outPath;
     	
     int    selectedTabIndex = 0;
-    String selectedTabName  = " ";
+    String selectedTabName  = " ";  
     	    
 	public static void main(String[] args){
 		System.out.println("*** WELCOME TO JANR2003 ***\n");
