@@ -1,0 +1,7 @@
+#!/bin/sh -f
+
+SCRIPT_DIR=`dirname $0`
+DISTRO_DIR=$SCRIPT_DIR/../ ; export DISTRO_DIR
+
+cd ~/CLAS12/janr2025/src/janr2003_java/
+java -Xmx8191m -cp "$DISTRO_DIR/lib/*" org.clas.lib.JanrViewer $*
