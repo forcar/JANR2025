@@ -13,10 +13,10 @@ public class Reader extends Constants {
 	boolean debug=false;
 	
 	public Reader() {
-		initializeConstants();
+		initializeConstants(); 
 	}
 	
-    public void initializeConstants() {
+    public void initializeConstants() { 
         System.out.println("Janr03.Reader.initializeConstants()");
             pi = 2.0 * Math.acos(0.0);
             a2 = Math.sqrt(2.0); 
