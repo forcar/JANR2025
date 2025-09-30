@@ -13,7 +13,7 @@ public class HJanr extends JanrMonitor {
         super(name);
         setRunNumber(0);
         dgmActive = true;
-        setJanrTabNames(0,"DATA");
+        setJanrTabNames(0,"DATA","MINUIT");
         setJanrTabNames(1,"FITC");
         useWCFButtons(true);
         use1234Buttons(true);
@@ -28,41 +28,9 @@ public class HJanr extends JanrMonitor {
     public void hjanr_init() { 	
     	int i=0;
     	hjanr_loadpar(1);
-     	for (String name : j.fname) hjanr_input(i++,j.janrPath+name); //loop over reactions
+     	for (String name : j.fname) hjanr_input(i++,j.janrPath+name); //loop over all reactions
     }
     
-    @Override 
-    public void createHistos(int run) {
-    	histosExist = true; 
-    	createDATA();
-    	createFITC();
-    }
-    
-    public void createDATA() {
-    	dgm[0].add("DATA", j.nplt,3,0,0,0); 
-    	for (int i=0; i<j.nplt; i++) {dgm[0].makeGE("WDAT" +i, 0, j.lab[i],"", i==0?    "W":"", 1,5);
-    	                              dgm[0].makeGE("WSEL" +i,-2, "",      "", i==0?     "":"", 3,4,1,3);
-                                      dgm[0].makeGE("WFIT1"+i,-2, "",      "", i==0?    "W":"", 1,1,1,1);
-                                      dgm[0].makeGE("WFIT2"+i,-2, "",      "", i==0?    "W":"", 2,1,1,2);}
-     	for (int i=0; i<j.nplt; i++) {dgm[0].makeGE("CDAT" +i, 0, "",      "", i==0?"COSCM":"", 1,5);
-                                      dgm[0].makeGE("CSEL" +i,-2, "",      "", i==0?     "":"", 3,4,1,3);
-    	                              dgm[0].makeGE("CFIT1"+i,-2, "",      "", i==0?"COSCM":"", 1,1,1,1);
-                                      dgm[0].makeGE("CFIT2"+i,-2, "",      "", i==0?"COSCM":"", 2,1,1,2);}
-        for (int i=0; i<j.nplt; i++) {dgm[0].makeGE("FDAT" +i, 0, "",      "", i==0?"PHICM":"", 1,5);
-                                      dgm[0].makeGE("FSEL" +i,-2, "",      "", i==0?     "":"", 3,4,1,3);
-       	                              dgm[0].makeGE("FFIT1"+i,-2, "",      "", i==0?"PHICM":"", 1,1,1,1);
-       	                              dgm[0].makeGE("FFIT2"+i,-2, "",      "", i==0?"PHICM":"", 2,1,1,2);
-    	                              }
-    }
-    
-    public void createFITC() {
-    	dgm[1].add("FITC", 1,1,0,0,0);   	
-    	String titx = j.pname[0]+"="+String.format("%.2f",j.start_value[0])+" ";
-    	for (int i=1; i<30; i++) titx+=" "+j.pname[i]+"="+String.format("%.2f",j.start_value[i])+"    ";
-       	dgm[1].makeGE("COF1", -1, 0, 31, "", titx," ",1,5);     dgm[1].cc("COF1", false, false, 0.5f, 30.5f, -4f, 4f, 0f, 0f);
-       	dgm[1].makeGE("SEL1", -2, 0, 31, "", titx," ",2,4,1); 
-    }
-
     public void hjanr_input(int iF, String file) {
     	
         String[] lab1 = {"(#pi^0)","(#pi^+)"};
@@ -118,7 +86,38 @@ public class HJanr extends JanrMonitor {
         j.lab[iF] = lab2Str + lab1Str; //store observable label
     }
     
+    @Override 
+    public void createHistos(int run) {
+    	histosExist = true; 
+    	createDATA();
+    	createFITC();
+    }
     
+    public void createDATA() {
+    	dgm[0].add("DATA", j.nplt,3,0,0,0); 
+    	for (int i=0; i<j.nplt; i++) {dgm[0].makeGE("WDAT" +i, 0, j.lab[i],"", i==0?    "W":"", 1,5);
+    	                              dgm[0].makeGE("WSEL" +i,-2, "",      "", i==0?     "":"", 3,4,1,3);
+                                      dgm[0].makeGE("WFIT1"+i,-2, "",      "", i==0?    "W":"", 1,1,1,1);
+                                      dgm[0].makeGE("WFIT2"+i,-2, "",      "", i==0?    "W":"", 2,1,1,2);}
+     	for (int i=0; i<j.nplt; i++) {dgm[0].makeGE("CDAT" +i, 0, "",      "", i==0?"COSCM":"", 1,5);
+                                      dgm[0].makeGE("CSEL" +i,-2, "",      "", i==0?     "":"", 3,4,1,3);
+    	                              dgm[0].makeGE("CFIT1"+i,-2, "",      "", i==0?"COSCM":"", 1,1,1,1);
+                                      dgm[0].makeGE("CFIT2"+i,-2, "",      "", i==0?"COSCM":"", 2,1,1,2);}
+        for (int i=0; i<j.nplt; i++) {dgm[0].makeGE("FDAT" +i, 0, "",      "", i==0?"PHICM":"", 1,5);
+                                      dgm[0].makeGE("FSEL" +i,-2, "",      "", i==0?     "":"", 3,4,1,3);
+       	                              dgm[0].makeGE("FFIT1"+i,-2, "",      "", i==0?"PHICM":"", 1,1,1,1);
+       	                              dgm[0].makeGE("FFIT2"+i,-2, "",      "", i==0?"PHICM":"", 2,1,1,2);
+    	                              }
+    }
+    
+    public void createFITC() {
+    	dgm[1].add("FITC", 1,1,0,0,0);   	
+    	String titx = j.pname[0]+"="+String.format("%.2f",j.start_value[0])+" ";
+    	for (int i=1; i<30; i++) titx+=" "+j.pname[i]+"="+String.format("%.2f",j.start_value[i])+"    ";
+       	dgm[1].makeGE("COF1", -1, 0, 31, "", titx," ",1,5);     dgm[1].cc("COF1", false, false, 0.5f, 30.5f, -4f, 4f, 0f, 0f);
+       	dgm[1].makeGE("SEL1", -2, 0, 31, "", titx," ",2,4,1); 
+    }
+
     @Override       
     public void plotHistos(int run, int nt, int bin) {
     	if(!histosExist) return;
