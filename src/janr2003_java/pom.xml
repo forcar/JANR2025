@@ -54,7 +54,7 @@
         <url>https://clasweb.jlab.org/clas12maven</url>
       </repository>
     </repositories>
-    <name>clas12ana</name>
+    <name>janr2025</name>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
