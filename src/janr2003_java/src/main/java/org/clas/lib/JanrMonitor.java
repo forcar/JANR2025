@@ -9,25 +9,24 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JSplitPane;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
+
+import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -35,7 +34,10 @@ import org.jlab.groot.base.GStyle;
 
 public class JanrMonitor implements ActionListener {
 	
-	Janr03 j = new Janr03();
+	public                               Janr03 j = new Janr03();
+
+    private JButton                startFitButton = null;
+    private JLabel                    statusLabel = null;
 
     private JPanel                     engineView = new JPanel();
     private EmbeddedCanvasTabbed             data = new EmbeddedCanvasTabbed("DATA");
@@ -78,6 +80,9 @@ public class JanrMonitor implements ActionListener {
     private JLabel  cof_resonance = new JLabel();
     private JLabel cof_parameters = new JLabel();
     private JLabel      cof_label = new JLabel("" + String.format("%d", 0)); 
+    
+    private Timer guiTimer;
+    private MinuitFitterWorker fitterWorker;
     
     public JanrMonitor(String name) {
 		initGStyle(14);
@@ -123,7 +128,8 @@ public class JanrMonitor implements ActionListener {
      }  
     
      public JSplitPane getCanvasPane(EmbeddedCanvasTabbed p1, EmbeddedCanvasTabbed p2) {
-        p1.setPreferredSize(new Dimension(2300,1000)); p2.setPreferredSize(new Dimension(2300,100));
+        p1.setPreferredSize(new Dimension(2300,1000)); 
+        p2.setPreferredSize(new Dimension(2300,100));
         vPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,p1,p2);    	  
         vPane.setDividerLocation(0.8);
         return vPane;
@@ -149,14 +155,16 @@ public class JanrMonitor implements ActionListener {
         controlsPanel1.add(packCofParameters());
         controlsPanel1.add(packCofParametersLabel());
         controlsPanel1.add(packResetButton());
-
-//        getDetectorPanel().add(getPanel(data,fitc),BorderLayout.CENTER);           
-        detectorPanel.add(getPanel(getDetectorCanvas(0),getDetectorCanvas(1)),BorderLayout.CENTER);  //DATA, FITC canvases         
-//        getDetectorPanel().add(getDetectorCanvas,BorderLayout.CENTER);           
-        detectorPanel.add(controlsPanel0,     BorderLayout.SOUTH); 
+        controlsPanel1.add(packFitButton());
+        controlsPanel1.add(packStatusLabel());
+          
+        detectorPanel.add(getPanel(getDetectorCanvas(0),
+        		                   getDetectorCanvas(1)),
+        		                   BorderLayout.CENTER);                     
+        detectorPanel.add(controlsPanel0,
+        		                   BorderLayout.SOUTH); 
         
         vPane.setResizeWeight(0.75);
-
     }
     
     public JPanel packWCFPanel() {
@@ -202,7 +210,17 @@ public class JanrMonitor implements ActionListener {
     public JPanel packResetButton() {
     	actionPanel.add(getResetButton());
     	return actionPanel;
+    }
+    
+    public JPanel packFitButton() {
+    	actionPanel.add(getStartFitButton());
+    	return actionPanel;
     } 
+    
+    public JPanel packStatusLabel() {
+    	actionPanel.add(getStatusLabel());
+    	return actionPanel;
+    }    
 
     public void use1234Buttons(boolean flag) {
     	use1234 = flag;
@@ -238,7 +256,7 @@ public class JanrMonitor implements ActionListener {
     
     public JPanel getBinSliderPanel() {
         JPanel sliderPane = new JPanel();
-        JLabel       label = new JLabel("" + String.format("%d", 0));       
+        JLabel      label = new JLabel("" + String.format("%d", 0));       
         binslider = new JSlider(JSlider.HORIZONTAL, 0, 30, 10); 
         binslider.setPreferredSize(new Dimension(100,10));
         sliderPane.add(new JLabel("WCF:",JLabel.CENTER));
@@ -283,9 +301,9 @@ public class JanrMonitor implements ActionListener {
         JPanel sliderPanel = new JPanel(new GridBagLayout());                     
         cofslider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {                                 			
-                j.xnew[cof] = cofslider.getValue()*0.1f-5f;  
+                j.xnew[cof] = cofslider.getValue()*0.1f-5f; 
                 cof_label.setText(String.valueOf(""+String.format("%.2f", j.xnew[cof])));
-                hjanr_loadpar(2);
+                j.loadpar(2);
                 Res2Amp(j.res_name[cof]);
                 plotHistos(getRunNumber(), nt, bin);
             }
@@ -344,7 +362,7 @@ public class JanrMonitor implements ActionListener {
 
     public void Res2Amp(String res) {
     	double am=0, ae=0, as=0, a32=0, a12=0, s12=0, rem=0, rsm=0;
-    	hjanr_loadpar(2); j.jip.janrIniPoint(0.4);
+    	j.loadpar(2); j.jip.janrIniPoint(0.4);
     	switch (res) {
     	case "P33(1232)": am=j.am3[0];    ae=j.ae3[0];    as=j.as3[0]; rem=ae/am; rsm=as/am; break;
     	case "P11(1440)": am=j.am1[0][0]; ae=0;           as=j.as1[0][0]; a32=0;                a12=j.aa1[21]*j.cmp1; s12=j.sa1[21]*j.csp1; break;
@@ -376,6 +394,48 @@ public class JanrMonitor implements ActionListener {
         JButton button = new JButton("Reset");
         button.addActionListener(this); 
         return button;
+    }
+    
+    public JButton getStartFitButton() {
+        startFitButton = new JButton("Fit");
+        statusLabel    = new JLabel("Status: Idle");
+        startFitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (fitterWorker == null || fitterWorker.isDone()) {
+                    startFitButton.setEnabled(false);
+                    startFitting();
+                }
+            }
+        });
+        
+        // Use a Swing Timer to periodically check and update the GUI
+        guiTimer = new Timer(50, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (fitterWorker != null && fitterWorker.isDone()) {
+                    startFitButton.setEnabled(true);
+                    statusLabel.setText("Status: Fit Finished");
+                    guiTimer.stop();
+                } else if (fitterWorker != null && !fitterWorker.isDone()) {
+//                	plotHistos(getRunNumber(), nt, bin);
+                    statusLabel.setText("Status: Fitting... (Running)");
+                }
+            }
+        });         
+        
+        return startFitButton;
+    }
+    
+    public JLabel getStatusLabel() {
+    	return statusLabel;
+    }
+    
+    public void startFitting() {
+        JanrFunc fcn = new JanrFunc(j); 
+        fitterWorker = new MinuitFitterWorker(fcn);
+        fitterWorker.execute();
+        guiTimer.start();
     }
 
     public void setJanrTabNames(int i, String... names) {
@@ -412,10 +472,6 @@ public class JanrMonitor implements ActionListener {
   	
     } 
     
-    public void hjanr_loadpar(int n) {
-    	
-    }
-    
     public int getRunNumber() {
         return runNumber;
     }
@@ -425,17 +481,18 @@ public class JanrMonitor implements ActionListener {
     }
     
     public void timerUpdate() { 
+    	System.out.println("Firing timer");
     	
     }
     
     public void ResetAction() {
     	cofList.clear(); configCMB.setSelectedIndex(0);
     	cofslider.setValue(((int)j.start_value[0]+5)*10);  
-    	hjanr_loadpar(3); 
+    	j.loadpar(3); 
     	plotHistos(getRunNumber(),nt,bin); 
     	Res2Amp(j.res_name[cof]);    	
     }
-    
+
     public void resetEventListener() {
         System.out.println(root+"resetEventListener():" +  getDetectorName() + " histogram for run "+ getRunNumber());
         createHistos(100);
@@ -458,4 +515,5 @@ public class JanrMonitor implements ActionListener {
         nt = bin1234 + 4*binWCF;
         plotHistos(getRunNumber(),nt,bin);
     }
+    
 }
