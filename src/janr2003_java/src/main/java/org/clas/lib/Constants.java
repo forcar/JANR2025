@@ -230,7 +230,7 @@ public class Constants {
 	    public static int[] point_stat = new int[MAXpoints];
 // HJANR_HCRS
 	    public static int MAX_K=8200, MAX_I=3, MAX_OBS=4, MAX_J=7;
-	    public static int nplt;
+	    public static int        nplt;
 	    public static int[][]   ndims = new    int[MAX_OBS][MAX_I];  
 	    public static double[][][] xx = new double[MAX_OBS][MAX_J][MAX_K]; 
 	    public static double[][]  crs = new double[MAX_OBS][MAX_K];
@@ -248,7 +248,8 @@ public class Constants {
 	    public static int nt1;
 	    
 //HJANR_VAL	    
-	    public static double[] xnew = new double[36];
+	    public static double[]  xnew = new double[36];
+	    public static double[] xnewe = new double[36];
 	    
 // JANR_TAB
 	    public static int maxevents;
