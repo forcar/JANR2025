@@ -21,13 +21,13 @@ public class HJanr extends JanrMonitor {
         init();
         hjanr_init();
         createHistos(getRunNumber());
-        hjanr_loadpar(3);
+        j.loadpar(3);
         plotHistos(getRunNumber(),0,0);
     }
     
     public void hjanr_init() { 	
     	int i=0;
-    	hjanr_loadpar(1);
+    	j.loadpar(1);
      	for (String name : j.fname) hjanr_input(i++,j.janrPath+name); //loop over all reactions
     }
     
@@ -151,9 +151,9 @@ public class HJanr extends JanrMonitor {
  
     public void hjanr_plot_data() { 
     	for (int i=0; i<j.nplt; i++ ) hjanr_plot_fit(i,f[i],f[i],c[i],c[i],0,j.ndims[i][2],w[i]); //w
+//    	for (int i=0; i<j.nplt; i++ ) getChi2(i,f[i],f[i],c[i],c[i],0,j.ndims[i][2]);
     	for (int i=0; i<j.nplt; i++ ) hjanr_plot_fit(i,f[i],f[i],0,j.ndims[i][1],w[i],w[i],c[i]); //coscm
-    	for (int i=0; i<j.nplt; i++ ) hjanr_plot_fit(i,0,j.ndims[i][0],c[i],c[i],w[i],w[i],f[i]); //phicm
-    	
+    	for (int i=0; i<j.nplt; i++ ) hjanr_plot_fit(i,0,j.ndims[i][0],c[i],c[i],w[i],w[i],f[i]); //phicm   
     }
     
     public void hjanr_plot_fit(int ifi, int f1, int f2, int c1, int c2, int w1, int w2, int itg) {
@@ -163,11 +163,12 @@ public class HJanr extends JanrMonitor {
     	double[] dume = new double[100];
     	double[]  obs = new double[100];
     	double[] obs1 = new double[100];
-    	double[] xmin = {-5,-1.1,1.08};
-    	double[] xmax = {365,1.1,1.70};
+//    	double[] xmin = {-5,-1.1,1.08};
+//    	double[] xmax = {365,1.1,1.70};
 
     	int indx, iplt=0, k=0;
-    	double ymin=0, ymax=0, xmx=-100;
+//    	double ymin=0, ymax=0, 
+    	double xmx=-100;
     	
     	if (w1!=w2) iplt=2;
      	if (c1!=c2) iplt=1; 
@@ -183,18 +184,23 @@ public class HJanr extends JanrMonitor {
     			int icc = ic*j.ndims[ifi][0];
     			for (int iff=f1; iff<f2+1; iff++) {
     				 indx = iww+icc+iff;
+//    				 indx = iww+icc+iff;System.out.println(iww+" "+icc+" "+iff+" "+indx);
+
     				 
-    				 if(j.xx[ifi][iplt][indx] < xmx) break;    				 
+    				 if(j.xx[ifi][iplt][indx] < xmx) break;    
+    				 
     				 j.xplt[k] = (float) j.xx[ifi][iplt][indx];
     				 dumd[k] =  j.crs[ifi][indx];
     				 dume[k] = j.crse[ifi][indx]; 
-    				 ymin = Math.min(ymin, dumd[k]);
-    				 ymax = Math.max(ymax, dumd[k]);
+//    				 ymin = Math.min(ymin, dumd[k]);
+//    				 ymax = Math.max(ymax, dumd[k]);
     				 
+//    				 System.out.println(ifi+" "+indx+" "+j.xx[ifi][6][indx]+" "+j.xx[ifi][5][indx]);
+
     				 int i1 = (int) j.xx[ifi][6][indx]-1;
     				 int i2 = (int) j.xx[ifi][5][indx]-1;
     				 
-    				 hjanr_loadpar(1); //default fit
+    				 j.loadpar(1); //default fit
     				 double dthe = j.xx[ifi][1][indx]; //theta_cm (deg)
     				 if (dthe>1.0) dthe=Math.cos(Math.toRadians(dthe)); //convert deg to coscm  
     				 
@@ -208,7 +214,7 @@ public class HJanr extends JanrMonitor {
     						      true);
     				 obs[k]=j.robs[i1][i2];
     				 
-                     hjanr_debug(j.jr.test);    				
+/*                     hjanr_debug(j.jr.test);    				
     				 if (j.jr.test) {
     					 System.out.println(ifi+" "+j.xx[ifi][2][indx]+" "+
     					                            j.xx[ifi][3][indx]+" "+
@@ -219,8 +225,8 @@ public class HJanr extends JanrMonitor {
     					                    
     					 System.out.println(ifi+" "+indx+" "+i1+" "+i2);
     				 } 
-
-    				 hjanr_loadpar(2); //new fit  
+*/
+    				 j.loadpar(2); //new fit  
     				 j.jr.janrRun(j.xx[ifi][2][indx], 
 						          j.xx[ifi][3][indx],
 						          j.xx[ifi][4][indx],
@@ -233,7 +239,7 @@ public class HJanr extends JanrMonitor {
     			}
     		}
     	}
-    	
+/*    	
     	if (j.xx[ifi][6][0]==1 || j.xx[ifi][6][0]==5) {
     		ymin=0.0; ymax=ymax*1.2;
     	} else {
@@ -244,6 +250,7 @@ public class HJanr extends JanrMonitor {
     	if (iplt==2 && j.xx[1][1][1]>1) {
     		xmin[iplt]=-5 ; xmax[iplt]=180;
     	}
+    	*/
     	
     	hjanr_reset_data(iplt, ifi); 
     	
@@ -270,8 +277,8 @@ public class HJanr extends JanrMonitor {
     	hjanr_reset_par();
     	String                   titx =    j.pname[0]+"="+String.format("%.2f",j.xnew[0])+" ";
     	for (int i=1; i<30; i++) titx+=" "+j.pname[i]+"="+String.format("%.2f",j.xnew[i])+"    ";
-    	for (int i=0; i<30; i++) dgm[1].getGE("COF1").addPoint(1+i,   j.start_value[i],0,0);   	
-    	for (int icof : cofList) dgm[1].getGE("SEL1").addPoint(1+icof, j.xnew[icof],     0,0); 
+    	for (int i=0; i<30; i++) dgm[1].getGE("COF1").addPoint(1+i,    j.start_value[i],0,0);   	
+    	for (int icof : cofList) dgm[1].getGE("SEL1").addPoint(1+icof, j.xnew[icof],    0,0); 
     	                         dgm[1].getGE("COF1").setTitleX(titx); 
     }
         
@@ -358,56 +365,6 @@ public class HJanr extends JanrMonitor {
         	 }
          }  	
     }
-
-    @Override
-    public void hjanr_loadpar(int n) {
-    	
-        double[] xload = new double[36]; 
-        
-        switch (n) {
-        case 1: for (int i = 0; i <= 35; i++)  xload[i] = j.start_value[i]; break;
-        case 2: for (int i = 0; i <= 35; i++)  xload[i] = j.xnew[i];        break;
-        case 3: for (int i = 0; i <= 35; i++) j.xnew[i] = j.start_value[i]; break;
-        case 4: for (int i = 0; i <= 35; i++) j.start_value[i] = j.xnew[i];
-        }
-
-        j.cm1  = xload[0];
-        j.ce1  = xload[1];
-        j.cs1  = xload[2];
-        j.cmp1 = xload[3];
-        j.csp1 = xload[4];
-        j.cep2 = xload[5];
-        j.csp2 = xload[6];
-        j.cmp3 = xload[7];
-        j.cep3 = xload[8];
-        j.csp3 = xload[9];
-        j.cep4 = xload[10];
-        j.csp4 = xload[11];
-        j.cep5 = xload[12];
-        j.csp5 = xload[13];
-        j.cmp6 = xload[14];
-        j.cep6 = xload[15];
-        j.csp6 = xload[16];
-        j.cmp7 = xload[17];
-        j.cep7 = xload[18];
-        j.csp7 = xload[19];
-        j.cmp8 = xload[20];
-        j.cep8 = xload[21];
-        j.csp8 = xload[22];
-        j.cmp9 = xload[23];
-        j.cep9 = xload[24];
-        j.cmp10 = xload[25];
-        j.cep10 = xload[26];
-        j.cmp11 = xload[27];
-        j.cep11 = xload[28];
-        j.cm2 = xload[29];
-        j.ce2 = xload[30];
-        j.cs2 = xload[31];
-        j.cm3 = xload[32];
-        j.ce3 = xload[33];
-        j.cs3 = xload[34];
-        j.cspa = xload[35];
-    }
     
     public void txt1out() {
     	
@@ -416,9 +373,63 @@ public class HJanr extends JanrMonitor {
     public void txt2out() {
     	
     }
+    
+	public double getChi2(int ifi, int w1, int w2, int c1, int c2, int f1, int f2) {
+		
+    	double[] dumd = new double[100];
+    	double[] dum  = new double[100];
+    	double[] dume = new double[100];
+    	double[]  obs = new double[100];
+    	double[] obs1 = new double[100];
+		
+    	int indx=0, iplt=0, k=0, ndf=0;
+		double chi2 = 0.0;
+    	double xmx=-100;
+		
+//    	if (w1!=w2) iplt=2;
+//     	if (c1!=c2) iplt=1; 
+//    	if (f1!=f2) iplt=0;
+    	
+    	for (int iw=w1; iw<w2+1; iw++) {
+    		int iww = iw*j.ndims[ifi][1]*j.ndims[ifi][0];
+    		for (int ic=c1; ic<c2+1; ic++) {
+    			int icc = ic*j.ndims[ifi][0];
+    			for (int iff=f1; iff<f2+1; iff++) {
+    				
+    				 indx = iww+icc+iff;
+    				 
+    				 if(j.xx[ifi][iplt][indx] < xmx) break;  
+    				 
+    				 double  x = (float) j.xx[ifi][iplt][indx];
+    				 double  y =  j.crs[ifi][indx];
+    				 double ye = j.crse[ifi][indx]; 
+    				 
+    				 int i1 = (int) j.xx[ifi][6][indx]-1;
+    				 int i2 = (int) j.xx[ifi][5][indx]-1;
+
+    				 double dthe = j.xx[ifi][1][indx]; // could be either theta or cos(theta)
+
+    				 j.loadpar(2); //new fit  
+    				 j.jr.janrRun(  j.xx[ifi][2][indx], 
+						          j.xx[ifi][3][indx],
+						          j.xx[ifi][4][indx],
+						          dthe>1.0 ? Math.cos(Math.toRadians(dthe)):dthe,
+						          j.xx[ifi][0][indx],
+						          true);
+				     double yv = j.robs[i1][i2]; 				 
+	                 xmx=j.xplt[k];
+	                 chi2 += (yv-y)*(yv-y)/(ye*ye);
+	                 System.out.println("DATA: "+(float)x+" "+(float)y+" "+(float)ye+" "+(float)yv+" "+(float)chi2);
+	                 k++;
+    			}
+    		}
+    	}
+    	ndf = k;
+		return chi2;
+	}
 
     public static void main(String[] args) { 
-    	HJanr hj = new HJanr("JANR");
+//    	HJanr hj = new HJanr("JANR");
     };
 
 
