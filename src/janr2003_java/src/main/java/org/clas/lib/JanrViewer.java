@@ -13,6 +13,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileSystemView;
@@ -23,12 +24,10 @@ import org.jlab.groot.base.GStyle;
 import org.jlab.io.base.DataEvent;
 import org.jlab.io.task.IDataEventListener;
 
-public class JanrViewer implements IDataEventListener, DetectorListener, ActionListener, ItemListener, ChangeListener {
-
-    JFrame frame = new JFrame("JANR2003");
-
+public class JanrViewer extends JFrame implements IDataEventListener, DetectorListener, ActionListener, ItemListener, ChangeListener {
+	
 	JPanel                   mainPanel = new JPanel();	
-	JMenuBar                   menuBar = new JMenuBar();     
+	JMenuBar                   menuBar = null;     
     JFileChooser                    fc = null; 	
 	JanrMonitor[]             monitors = null;
 
@@ -44,21 +43,25 @@ public class JanrViewer implements IDataEventListener, DetectorListener, ActionL
     int    selectedTabIndex = 0;
     String selectedTabName  = " ";  
     	    
-	public static void main(String[] args){
-		System.out.println("*** WELCOME TO JANR2003 ***\n");
-	    JanrViewer viewer = new JanrViewer(args);
-	}
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new JanrViewer(args);
+            }
+        });
+    }
 	
     public JanrViewer(String[] args) {   
     	createMonitors(args);
     	createMenuBar();
     	createPanels();  
-	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    frame.setJMenuBar(getMenuBar());
-	    frame.add(getMainPanel());
-	    frame.pack();
-	    frame.setSize(2300, 1100);
-	    frame.setVisible(true);
+	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    setJMenuBar(menuBar);
+	    add(getMainPanel());
+	    pack();
+	    setSize(2300, 1100);
+	    setVisible(true);
         System.out.println("JanrViewer init complete \n");
     }
 
@@ -72,24 +75,21 @@ public class JanrViewer implements IDataEventListener, DetectorListener, ActionL
     
     public void initMonitors() {
     	System.out.println("JanrViewer.initMonitors");
-//		for(int k=0; k<this.monitors.length; k++) monitors[k].init();
+//		for(JanrMonitor m : monitors) m.init();
     } 
     
     public void createMenuBar() {
-    	System.out.println("JanrViewer.createMenuBar");        		         
+    	System.out.println("JanrViewer.createMenuBar");
+    	menuBar = new JMenuBar();
         JMenu menu = new JMenu("File");
         JMenuItem menuItem = new JMenuItem("Fit Data"); menuItem.addActionListener(this); menu.add(menuItem);
-        getMenuBar().add(menu);
+        menuBar.add(menu);
     }
-    
-    public JMenuBar getMenuBar() {
-    	return menuBar;
-    }
-    
+
     public JPanel getMainPanel() {
     	return mainPanel;
     }
-    
+
     public void createPanels() {
     	System.out.println("JanrViewer.createPanels()");
     	
@@ -101,7 +101,7 @@ public class JanrViewer implements IDataEventListener, DetectorListener, ActionL
         GStyle.getAxisAttributesY().setTitleFontSize(18);
         GStyle.getAxisAttributesY().setLabelFontSize(14);
 
-        for(int k=0; k<this.monitors.length; k++) tabbedpane.add(this.monitors[k].getDetectorPanel(), this.monitors[k].getDetectorName());                     
+        for(JanrMonitor m : monitors) tabbedpane.add(m.getDetectorPanel(), m.getDetectorName());                     
 
         setCanvasUpdate(canvasUpdateTime);       
     }
@@ -109,9 +109,7 @@ public class JanrViewer implements IDataEventListener, DetectorListener, ActionL
     public void setCanvasUpdate(int time) {
         System.out.println("JanrViewer.setCanvasUpdate("+time+")");
         this.canvasUpdateTime = time;
-        for(int k=0; k<this.monitors.length; k++) {
-            this.monitors[k].setCanvasUpdate(time);
-        }
+        for(JanrMonitor m : monitors) m.setCanvasUpdate(time);
     }
     
 	@Override
@@ -126,11 +124,8 @@ public class JanrViewer implements IDataEventListener, DetectorListener, ActionL
     
     @Override
     public void timerUpdate() {
-        if(this.runNumber==0) return;
-        for(int k=0; k<this.monitors.length; k++) {
-            this.monitors[k].timerUpdate();
-        }
-   }
+        for(JanrMonitor m : monitors) m.timerUpdate();
+    }
    
     @Override
     public void dataEventAction(DataEvent event) {  
@@ -139,20 +134,18 @@ public class JanrViewer implements IDataEventListener, DetectorListener, ActionL
     
     @Override
     public void resetEventListener() {
-        for(int k=0; k<this.monitors.length; k++) {
-            this.monitors[k].resetEventListener();
-            this.monitors[k].timerUpdate();
-        }      
+        for(JanrMonitor m : monitors) {m.resetEventListener(); m.timerUpdate();}      
     } 
-   
-	@Override
-	public void processShape(DetectorShape2D arg0) {
-		// TODO Auto-generated method stub		
-	}
-    
+
     @Override
     public void stateChanged(ChangeEvent e) {
         this.timerUpdate();
-    }    
+    }
+
+	@Override
+	public void processShape(DetectorShape2D arg0) {
+		// TODO Auto-generated method stub
+		
+	}    
     
 }
